@@ -18,12 +18,15 @@ export const useScreen = () => {
   const isMobile = () => {
     return Screen.lt.md;
   };
-
+  const updateScreenTest = (payload: boolean) => {
+    screenMinimized.value = payload;
+  };
   return {
     screenMinimized,
     updateScreenState,
     setScreenDeviceOrientation,
     isLandscape,
     isMobile,
+    updateScreenTest,
   };
 };

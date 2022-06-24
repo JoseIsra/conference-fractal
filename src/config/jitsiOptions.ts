@@ -1,11 +1,11 @@
 // https://jitsi.fractaluptest.xyz/
 export default {
   hosts: {
-    domain: 'coop.fractalup.com',
-    muc: 'muc.coop.fractalup.com', // FIXME: use XEP-0030
-    focus: 'focus.coop.fractalup.com',
+    domain: '8x8.vc',
+    muc: 'conference.holymolywacamoly.8x8.vc', // FIXME: use XEP-0030
+    focus: 'focus.8x8.vc',
   },
-  serviceUrl: 'wss://coop.fractalup.com/xmpp-websocket',
+  serviceUrl: 'wss://8x8.vc/xmpp-websocket',
   // enableLipSync: false,
   // clientNode: "https://jitsi.org/jitsimeet",
   // enableP2P: true,
@@ -144,10 +144,10 @@ export default {
   //   server: "meet.jit.si",
   // },
   deploymentInfo: {
-    environment: 'coop-fractalup-com',
+    environment: 'meet-jit-si',
     envType: 'prod',
     releaseNumber: '735',
-    shard: 'fractalup-eu-central-1a-s52',
+    shard: 'meet-jit-si-eu-central-1a-s52',
     region: 'eu-central-1',
     userRegion: 'eu-central-1',
     crossRegion: 0,

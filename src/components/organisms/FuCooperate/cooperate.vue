@@ -1,7 +1,7 @@
 <template>
   <section
     class="o-cooperate"
-    v-on="{ mousemove: !screenMinimized ? toogleMenuBar : null }"
+    v-on="{ mousemove: !screenMinimized ? toogleMenuBar : toogleMenuBar }"
     v-touch:tap="toogleMenuBar"
     :style="[bgRenderStyles, heightObjectStyle]"
     @click.self="closePanels"
@@ -17,7 +17,7 @@
 
     <fu-cooperate-header v-show="renderHeader" />
 
-    <fu-cooperate-menu-bar v-show="showMenuBar && !screenMinimized" />
+    <fu-cooperate-menu-bar v-show="showMenuBar" />
     <transition :name="$q.screen.lt.sm ? 'dragged' : 'slide'">
       <fu-cooperate-side-bar v-show="isSidebarRender" />
     </transition>
@@ -60,7 +60,7 @@ import FuHandNotification from 'atoms/FuHandNotification';
 import FuFullScreen from 'molecules/FuFullScreen';
 import FuWarning from 'atoms/FuWarning';
 import FuCooperateParticipantsPanel from '@/components/molecules/FuCooperateParticipantsPanel';
-import _ from 'lodash';
+import { debounce as _debounce } from 'lodash';
 import {
   useRoom,
   useScreen,
@@ -95,6 +95,7 @@ export default defineComponent({
     const { layout, setNewLayout } = useLayout();
     const $q = useQuasar();
     const { setShowExcaliBoard } = useBoard();
+    const isMultichat = window.xprops?.multichat;
 
     onMounted(() => {
       emit('mounted');
@@ -132,14 +133,24 @@ export default defineComponent({
       updateScreenState,
       setScreenDeviceOrientation,
       isMobile,
+      updateScreenTest,
     } = useScreen();
 
-    const hideMenuBar = _.debounce(() => {
+    const hideMenuBar = _debounce(() => {
       showMenuBar.value = false;
       showUsersVideoList.value = false;
       showHeader.value = false;
     }, 5000);
 
+    window?.xprops?.onProps?.((props) => {
+      if (isMultichat) {
+        if (props.miniMode) {
+          updateScreenTest(true);
+        } else {
+          updateScreenTest(false);
+        }
+      }
+    });
     watch(
       () => screenMinimized.value,
       (value) => {
@@ -213,6 +224,7 @@ export default defineComponent({
       setSidebarState(false);
       setShowChat(false);
     };
+
     return {
       toogleMenuBar,
       showMenuBar,

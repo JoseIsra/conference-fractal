@@ -782,7 +782,6 @@ export function useJitsi() {
         enabled: false,
       },
     });
-
     room.on(
       JitsiMeetJS.events.conference.TRACK_ADDED,
       (track: JitsiRemoteTrack) => {

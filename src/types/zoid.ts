@@ -58,4 +58,8 @@ export interface ZoidProps {
   logUserExits?: (fractalUserIds: string[]) => void;
   isVisitor?: boolean;
   handleParticipantLeave(): void;
+  prejoinView?: boolean;
+  miniMode?: boolean;
+  onProps?: (cb: (arg: ZoidProps) => void) => void;
+  multichat?: boolean;
 }

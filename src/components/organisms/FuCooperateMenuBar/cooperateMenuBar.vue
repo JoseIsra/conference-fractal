@@ -57,6 +57,36 @@
           </q-tooltip>
         </q-btn>
       </aside>
+      {{ multichatMinimized }}
+      <div class="row items-center" v-if="multichatMinimized">
+        <q-btn
+          flat
+          round
+          :class="[
+            'a-menuBar__icon',
+            {
+              active: functionsOnMenuBar.handNotificationActive,
+            },
+          ]"
+          :icon="
+            functionsOnMenuBar.handNotificationActive
+              ? iconsFunctions.hand.onState
+              : iconsFunctions.hand.offState
+          "
+          size="13px"
+          @click="toogleHandUp"
+        >
+          <q-tooltip class="bg-grey-10">
+            <label class="a-menuBar__icon__tooltip">
+              {{
+                functionsOnMenuBar.handNotificationActive
+                  ? iconsFunctions.hand.toolTipSecondMessage
+                  : iconsFunctions.hand.toolTipMessage
+              }}
+            </label>
+          </q-tooltip>
+        </q-btn>
+      </div>
       <div class="a-menuBar__functions">
         <!-- TODO: Icon active like camera and mic porque cuando se presiona en dejar de compartir se queda con el círculo -->
         <q-btn
@@ -205,7 +235,7 @@
           </q-tooltip>
         </q-btn>
       </div>
-      <div class="a-menuBar__functions__responsive">
+      <div v-if="!screenMinimized" class="a-menuBar__functions__responsive">
         <q-btn
           icon="reorder"
           flat
@@ -363,7 +393,7 @@ export default defineComponent({
     const { waitingParticipants } = useHandleParticipants();
 
     // const { roomState } = useRoom();
-
+    const multichatMinimized = ref(false);
     let openNetworkConfig = ref(false);
     const target = ref(null);
     const objectFunctionalities = reactive<Functionalities>({
@@ -720,7 +750,7 @@ export default defineComponent({
     //   }
     // };
 
-    const { updateScreenState } = useScreen();
+    const { updateScreenState, screenMinimized } = useScreen();
 
     const minimizeScreen = () => {
       updateScreenState();
@@ -793,6 +823,8 @@ export default defineComponent({
       openAdminPanel,
       modifierClass,
       target,
+      screenMinimized,
+      multichatMinimized,
     };
   },
 });
