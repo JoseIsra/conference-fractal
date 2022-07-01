@@ -1,18 +1,23 @@
 <template>
   <section
     class="o-cooperate"
-    v-on="{ mousemove: !screenMinimized ? toogleMenuBar : toogleMenuBar }"
-    v-touch:tap="toogleMenuBar"
+    v-touch:tap="handleTap"
     :style="[bgRenderStyles, heightObjectStyle]"
+    v-on="{
+      mousemove:
+        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
+    }"
     @click.self="closePanels"
   >
     <q-resize-observer @resize="onResize" />
-    <q-icon
-      name="fas fa-expand-alt"
-      size="24px"
-      class="o-cooperate__expand"
-      @click="updateScreenState"
+    <q-btn
       v-show="screenMinimized"
+      class="o-cooperate__expand absolute-top-right q-mt-sm q-mr-sm rounded-borders"
+      round
+      dense
+      flat
+      icon="aspect_ratio"
+      @click="updateScreenState"
     />
 
     <fu-cooperate-header v-show="renderHeader" />
@@ -92,10 +97,9 @@ export default defineComponent({
     const { participantVideoTracks, participantAudioTracks } =
       useHandleParticipants();
     const { openTabSharedWarning } = usePanels();
-    const { layout, setNewLayout } = useLayout();
+    const { layout, setNewLayout, isMultichatUser } = useLayout();
     const $q = useQuasar();
     const { setShowExcaliBoard } = useBoard();
-    const isMultichat = window.xprops?.multichat;
 
     onMounted(() => {
       emit('mounted');
@@ -116,7 +120,7 @@ export default defineComponent({
       window.removeEventListener('resize', handleDeviceHeight);
     });
 
-    let showMenuBar = ref<boolean>(false);
+    let showMenuBar = ref<boolean>(true);
     let showUsersVideoList = ref<boolean>(false);
     const showHeader = ref<boolean>(true);
 
@@ -143,7 +147,7 @@ export default defineComponent({
     }, 5000);
 
     window?.xprops?.onProps?.((props) => {
-      if (isMultichat) {
+      if (isMultichatUser) {
         if (props.miniMode) {
           updateScreenTest(true);
         } else {
@@ -154,8 +158,11 @@ export default defineComponent({
     watch(
       () => screenMinimized.value,
       (value) => {
+        console.log('MINIMIZED VALUE', value);
         if (value) {
           hideMenuBar.cancel();
+        } else {
+          showMenuBar.value = true;
         }
       }
     );
@@ -195,6 +202,16 @@ export default defineComponent({
       return layout.value == LAYOUT.PRESENTATION_LAYOUT;
     });
 
+    watch(
+      () => isPresentationLayout.value,
+      (value) => {
+        if (value) {
+          hideMenuBar.cancel();
+          showMenuBar.value = true;
+        }
+      }
+    );
+
     const renderHeader = computed(() => {
       return !screenMinimized.value &&
         $q.screen.lt.md &&
@@ -225,6 +242,12 @@ export default defineComponent({
       setShowChat(false);
     };
 
+    const handleTap = () => {
+      if (isMobile()) {
+        toogleMenuBar();
+      }
+    };
+
     return {
       toogleMenuBar,
       showMenuBar,
@@ -247,6 +270,8 @@ export default defineComponent({
       bgRenderStyles,
       onResize,
       closePanels,
+      isPresentationLayout,
+      handleTap,
     };
   },
 });

@@ -14,17 +14,8 @@
 
   &__expand {
     color: white;
-    cursor: pointer;
-    left: 10px;
-    opacity: 0.2;
-    position: absolute;
-    top: 10px;
     transition: 0.3s;
     z-index: 9999;
-
-    &:hover {
-      opacity: 1;
-    }
   }
 }
 

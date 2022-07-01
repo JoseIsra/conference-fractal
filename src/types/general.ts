@@ -5,4 +5,5 @@ export interface MenuOptionsInteractions {
   BOARD: () => void;
   DEFAULT_LAYOUT: () => void;
   PRESENTATION_LAYOUT: () => void;
+  ADMIN_PANEL: () => void;
 }

@@ -1,0 +1,18 @@
+.a-tiny {
+  &__mainWrapper {
+    background: linear-gradient(350deg, mediumslateblue 0%, #0099ff 75%);
+    border-radius: 5px;
+  }
+  .active {
+    background-color: rgba(0, 0, 0, 0.15);
+    border: 1px solid #fffffe;
+  }
+
+  &__btn {
+    border-radius: 6px;
+    margin: 0 0.1rem;
+    &__tooltip {
+      font-size: 0.65rem;
+    }
+  }
+}

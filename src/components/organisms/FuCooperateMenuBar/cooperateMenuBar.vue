@@ -1,149 +1,230 @@
 <template>
   <div class="a-menuBar">
-    <section :class="['a-menuBar__box', modifierClass]">
-      <aside class="a-menuBar__periferics">
-        <q-btn
-          flat
-          round
-          :class="['a-menuBar__icon', { active: userMe.isMicOn }]"
-          :icon="
-            !userMe.isMicOn
-              ? iconsPeriferics.mic.offState
-              : iconsPeriferics.mic.onState
-          "
-          :disable="
-            userMe.isPublishing == 2 || userMe.isMicBlocked || !userMe.hasMic
-          "
-          size="13px"
-          @click="toggleMIC"
-        >
-          <q-tooltip class="bg-grey-10" v-if="userMe.micPublishedState == 0">
-            <label class="a-menuBar__icon__tooltip">
-              {{
-                !userMe.isMicOn
-                  ? iconsPeriferics.mic.toolTipMessage
-                  : iconsPeriferics.mic.toolTipSecondMessage
-              }}
-            </label>
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          flat
-          round
-          :class="['a-menuBar__icon', { active: userMe.isCameraOn }]"
-          :icon="
-            userMe.cameraPublishedState == 1
-              ? iconsPeriferics.camera.onState
-              : userMe.cameraPublishedState == 2
-              ? iconsPeriferics.camera.loadingState
-              : iconsPeriferics.camera.offState
-          "
-          :disable="
-            userMe.isPublishing == 2 ||
-            userMe.isCameraBlocked ||
-            !userMe.hasWebcam
-          "
-          size="13px"
-          @click="toggleCamera"
-        >
-          <q-tooltip class="bg-grey-10">
-            <label class="a-menuBar__icon__tooltip">
-              {{
-                !userMe.isCameraOn
-                  ? iconsPeriferics.camera.toolTipMessage
-                  : iconsPeriferics.camera.toolTipSecondMessage
-              }}
-            </label>
-          </q-tooltip>
-        </q-btn>
-      </aside>
-      {{ multichatMinimized }}
-      <div class="row items-center" v-if="multichatMinimized">
-        <q-btn
-          flat
-          round
-          :class="[
-            'a-menuBar__icon',
-            {
-              active: functionsOnMenuBar.handNotificationActive,
-            },
-          ]"
-          :icon="
-            functionsOnMenuBar.handNotificationActive
-              ? iconsFunctions.hand.onState
-              : iconsFunctions.hand.offState
-          "
-          size="13px"
-          @click="toogleHandUp"
-        >
-          <q-tooltip class="bg-grey-10">
-            <label class="a-menuBar__icon__tooltip">
-              {{
-                functionsOnMenuBar.handNotificationActive
-                  ? iconsFunctions.hand.toolTipSecondMessage
-                  : iconsFunctions.hand.toolTipMessage
-              }}
-            </label>
-          </q-tooltip>
-        </q-btn>
-      </div>
-      <div class="a-menuBar__functions">
-        <!-- TODO: Icon active like camera and mic porque cuando se presiona en dejar de compartir se queda con el círculo -->
-        <q-btn
-          flat
-          round
-          :class="[
-            'a-menuBar__icon',
-            {
-              active: userMe.isScreenSharing,
-            },
-          ]"
-          :icon="
-            !userMe.isScreenSharing
-              ? iconsFunctions.screenShare.onState
-              : iconsFunctions.screenShare.offState
-          "
-          size="13px"
-          :disable="userMe.isPublishing == 2 || userMe.isScreenShareBlocked"
-          @click="toggleDesktopScreenCapture"
-        >
-          <q-tooltip class="bg-grey-10">
-            <label class="a-menuBar__icon__tooltip">
-              {{
-                !userMe.isScreenSharing
-                  ? iconsFunctions.screenShare.toolTipMessage
-                  : iconsFunctions.screenShare.toolTipSecondMessage
-              }}
-            </label>
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          flat
-          round
-          :class="[
-            'a-menuBar__icon',
-            {
-              active: functionsOnMenuBar.handNotificationActive,
-            },
-          ]"
-          :icon="
-            functionsOnMenuBar.handNotificationActive
-              ? iconsFunctions.hand.onState
-              : iconsFunctions.hand.offState
-          "
-          size="13px"
-          @click="toogleHandUp"
-        >
-          <q-tooltip class="bg-grey-10">
-            <label class="a-menuBar__icon__tooltip">
-              {{
-                functionsOnMenuBar.handNotificationActive
-                  ? iconsFunctions.hand.toolTipSecondMessage
-                  : iconsFunctions.hand.toolTipMessage
-              }}
-            </label>
-          </q-tooltip>
-        </q-btn>
+    <div
+      v-if="!screenMinimized"
+      class="a-menuBar__box row items-center full-width justify-center"
+    >
+      <section
+        class="a-menuBar__box__main row absolute items-center justify-center"
+      >
+        <aside class="a-menuBar__periferics">
+          <q-btn
+            flat
+            round
+            :class="['a-menuBar__icon', { active: userMe.isMicOn }]"
+            :icon="
+              !userMe.isMicOn
+                ? iconsPeriferics.mic.offState
+                : iconsPeriferics.mic.onState
+            "
+            :disable="
+              userMe.isPublishing == 2 || userMe.isMicBlocked || !userMe.hasMic
+            "
+            size="13px"
+            @click="toggleMIC"
+          >
+            <q-tooltip class="bg-grey-10" v-if="userMe.micPublishedState == 0">
+              <label class="a-menuBar__icon__tooltip">
+                {{
+                  !userMe.isMicOn
+                    ? iconsPeriferics.mic.toolTipMessage
+                    : iconsPeriferics.mic.toolTipSecondMessage
+                }}
+              </label>
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            :class="['a-menuBar__icon', { active: userMe.isCameraOn }]"
+            :icon="
+              userMe.cameraPublishedState == 1
+                ? iconsPeriferics.camera.onState
+                : userMe.cameraPublishedState == 2
+                ? iconsPeriferics.camera.loadingState
+                : iconsPeriferics.camera.offState
+            "
+            :disable="
+              userMe.isPublishing == 2 ||
+              userMe.isCameraBlocked ||
+              !userMe.hasWebcam
+            "
+            size="13px"
+            @click="toggleCamera"
+          >
+            <q-tooltip class="bg-grey-10">
+              <label class="a-menuBar__icon__tooltip">
+                {{
+                  !userMe.isCameraOn
+                    ? iconsPeriferics.camera.toolTipMessage
+                    : iconsPeriferics.camera.toolTipSecondMessage
+                }}
+              </label>
+            </q-tooltip>
+          </q-btn>
+        </aside>
+        <div class="a-menuBar__functions">
+          <!-- TODO: Icon active like camera and mic porque cuando se presiona en dejar de compartir se queda con el círculo -->
+          <q-btn
+            flat
+            round
+            :class="[
+              'a-menuBar__icon',
+              {
+                active: userMe.isScreenSharing,
+              },
+            ]"
+            :icon="
+              !userMe.isScreenSharing
+                ? iconsFunctions.screenShare.onState
+                : iconsFunctions.screenShare.offState
+            "
+            size="13px"
+            :disable="userMe.isPublishing == 2 || userMe.isScreenShareBlocked"
+            @click="toggleDesktopScreenCapture"
+          >
+            <q-tooltip class="bg-grey-10">
+              <label class="a-menuBar__icon__tooltip">
+                {{
+                  !userMe.isScreenSharing
+                    ? iconsFunctions.screenShare.toolTipMessage
+                    : iconsFunctions.screenShare.toolTipSecondMessage
+                }}
+              </label>
+            </q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            :class="[
+              'a-menuBar__icon',
+              {
+                active: functionsOnMenuBar.handNotificationActive,
+              },
+            ]"
+            :icon="
+              functionsOnMenuBar.handNotificationActive
+                ? iconsFunctions.hand.onState
+                : iconsFunctions.hand.offState
+            "
+            size="13px"
+            @click="toogleHandUp"
+          >
+            <q-tooltip class="bg-grey-10">
+              <label class="a-menuBar__icon__tooltip">
+                {{
+                  functionsOnMenuBar.handNotificationActive
+                    ? iconsFunctions.hand.toolTipSecondMessage
+                    : iconsFunctions.hand.toolTipMessage
+                }}
+              </label>
+            </q-tooltip>
+          </q-btn>
+        </div>
+        <div v-if="!screenMinimized" class="a-menuBar__functions__responsive">
+          <q-btn
+            icon="reorder"
+            flat
+            round
+            color="white"
+            @click="openResponsiveMenuOfFunctions"
+          >
+            <q-badge
+              v-show="
+                chatNotification &&
+                (notificationCount == 0 || amountHandNotification == 0)
+              "
+              color="red"
+              class="a-menuBar__icon__chatbadge"
+              rounded
+              floating
+            >
+            </q-badge>
+            <q-badge
+              rounded
+              floating
+              v-show="notificationCount > 0 || amountHandNotification > 0"
+              :class="[
+                'a-menuBar__icon__topin',
+                { '--roleOne': userMe.roleId == 1 },
+                waitingParticipants.length > 0
+                  ? '--participants'
+                  : '--noparticipants',
+              ]"
+            >
+              {{ notificationCount + amountHandNotification }}
+            </q-badge>
+          </q-btn>
+          <q-btn
+            icon="pan_tool"
+            class="a-menuBar__functions__responsive__handBtn"
+            flat
+            round
+            color="grey-1"
+            size="13px"
+            @click="handleEspecialBehaviour('HANDUP')"
+          >
+            <q-badge
+              v-show="functionsOnMenuBar.handNotificationActive"
+              color="red"
+              rounded
+              floating
+              >x</q-badge
+            >
+          </q-btn>
+
+          <fu-cooperate-menu
+            v-show="functionsOnMenuBar.renderResponsiveFunctionMenu"
+            :objectFunctionalities="objectFunctionalities"
+            class="a-menuBar__functions__responsive__menu"
+            :isActions="false"
+            :renderFunctions="true"
+            width="100%"
+            bottom="120%"
+            ref="target"
+          />
+        </div>
+        <aside class="a-menuBar__options">
+          <q-btn
+            round
+            flat
+            :ripple="false"
+            v-for="icon in iconsOptions"
+            :key="icon.id"
+            :icon="icon.onState"
+            class="a-menuBar__icon"
+            @click="handleMenuPosition(icon.ubication)"
+            size="13px"
+          >
+            <q-tooltip class="bg-grey-10">
+              <label class="a-menuBar__icon__tooltip">
+                {{ icon.toolTipMessage }}
+              </label>
+            </q-tooltip>
+          </q-btn>
+          <fu-cooperate-menu
+            v-show="functionsOnMenuBar.renderPopupMenu"
+            class="a-menuBar__options__menu"
+            :isActions="isActions"
+            :isOptions="isOptions"
+            :renderFunctions="false"
+            width="280px"
+            bottom="120%"
+          />
+        </aside>
+        <fu-cooperate-menu
+          class="a-menuBar__responsiveOptions"
+          v-show="functionsOnMenuBar.renderPopupMenu"
+          :isActions="isActions"
+          :isOptions="isOptions"
+          :renderFunctions="false"
+          width="100%"
+          bottom="120%"
+        />
+      </section>
+      <aside
+        class="a-menuBar__rightToolbar row items-center absolute q-mr-lg gt-xs"
+      >
         <q-btn
           flat
           round
@@ -234,109 +315,13 @@
             </label>
           </q-tooltip>
         </q-btn>
-      </div>
-      <div v-if="!screenMinimized" class="a-menuBar__functions__responsive">
-        <q-btn
-          icon="reorder"
-          flat
-          round
-          color="white"
-          @click="openResponsiveMenuOfFunctions"
-        >
-          <q-badge
-            v-show="
-              chatNotification &&
-              (notificationCount == 0 || amountHandNotification == 0)
-            "
-            color="red"
-            class="a-menuBar__icon__chatbadge"
-            rounded
-            floating
-          >
-          </q-badge>
-          <q-badge
-            rounded
-            floating
-            v-show="notificationCount > 0 || amountHandNotification > 0"
-            :class="[
-              'a-menuBar__icon__topin',
-              { '--roleOne': userMe.roleId == 1 },
-              waitingParticipants.length > 0
-                ? '--participants'
-                : '--noparticipants',
-            ]"
-          >
-            {{ notificationCount + amountHandNotification }}
-          </q-badge>
-        </q-btn>
-        <q-btn
-          icon="pan_tool"
-          class="a-menuBar__functions__responsive__handBtn"
-          flat
-          round
-          color="grey-1"
-          size="13px"
-          @click="handleEspecialBehaviour('HANDUP')"
-        >
-          <q-badge
-            v-show="functionsOnMenuBar.handNotificationActive"
-            color="red"
-            rounded
-            floating
-            >x</q-badge
-          >
-        </q-btn>
-
-        <fu-cooperate-menu
-          v-show="functionsOnMenuBar.renderResponsiveFunctionMenu"
-          :objectFunctionalities="objectFunctionalities"
-          class="a-menuBar__functions__responsive__menu"
-          :isActions="false"
-          :renderFunctions="true"
-          width="100%"
-          bottom="120%"
-          ref="target"
-        />
-      </div>
-      <aside class="a-menuBar__options">
-        <q-btn
-          round
-          flat
-          :ripple="false"
-          v-for="icon in iconsOptions"
-          v-show="icon.id == '1' ? canSeeActionsMenu : true"
-          :key="icon.id"
-          :icon="icon.onState"
-          class="a-menuBar__icon"
-          @click="handleMenuPosition(icon.ubication)"
-          size="13px"
-        >
-          <q-tooltip class="bg-grey-10">
-            <label class="a-menuBar__icon__tooltip">
-              {{ icon.toolTipMessage }}
-            </label>
-          </q-tooltip>
-        </q-btn>
-        <fu-cooperate-menu
-          v-show="functionsOnMenuBar.renderPopupMenu"
-          class="a-menuBar__options__menu"
-          :isActions="isActions"
-          :isOptions="isOptions"
-          :renderFunctions="false"
-          width="280px"
-          bottom="120%"
-        />
       </aside>
-      <fu-cooperate-menu
-        class="a-menuBar__responsiveOptions"
-        v-show="functionsOnMenuBar.renderPopupMenu"
-        :isActions="isActions"
-        :isOptions="isOptions"
-        :renderFunctions="false"
-        width="100%"
-        bottom="120%"
-      />
-    </section>
+    </div>
+    <fu-tiny-menu-bar
+      v-else
+      class="absolute-bottom row items-center justify-center q-pa-sm"
+      :objectFunctionalities="objectFunctionalities"
+    />
     <q-dialog v-model="openAdminPanel">
       <fu-admin-panel />
     </q-dialog>
@@ -355,7 +340,7 @@ import {
 } from 'vue';
 import FuCooperateMenu from 'molecules/FuCooperateMenu';
 import { Functionalities } from '@/types';
-import { MediaType, LAYOUT } from '@/utils/enums/general';
+import { MediaType } from '@/utils/enums/general';
 import { iconsPeriferics, iconsFunctions } from '@/helpers/iconsMenuBar';
 
 import {
@@ -370,22 +355,23 @@ import { useJitsi } from '@/composables/jitsi';
 import { usePanels } from '@/composables/panels';
 import { useJitsiError } from '@/composables/jitsiError';
 import { useLayout } from '@/composables/layout';
-import { useMainView } from '@/composables/mainView';
 import { nanoid } from 'nanoid';
 
 import FuAdminPanel from 'organisms/FuAdminPanel';
 import { iconsOptions } from '@/helpers/iconsMenuBar';
-import _ from 'lodash';
+import { cloneDeep as _cloneDeep, debounce as _debounce } from 'lodash';
 import JitsiMeetJS from '@solyd/lib-jitsi-meet';
 import JitsiLocalTrack from '@solyd/lib-jitsi-meet/dist/esm/modules/RTC/JitsiLocalTrack';
 import { MAIN_VIEW_MODE, MAIN_VIEW_LOCKED_TYPE } from '@/utils/enums';
 import { onClickOutside } from '@vueuse/core';
+import FuTinyMenuBar from 'atoms/FuTinyMenuBar';
 
 export default defineComponent({
   name: 'FuCooperateMenuBar',
   components: {
     FuCooperateMenu,
     FuAdminPanel,
+    FuTinyMenuBar,
   },
   setup() {
     /* const { options } = useActions(); */
@@ -393,7 +379,6 @@ export default defineComponent({
     const { waitingParticipants } = useHandleParticipants();
 
     // const { roomState } = useRoom();
-    const multichatMinimized = ref(false);
     let openNetworkConfig = ref(false);
     const target = ref(null);
     const objectFunctionalities = reactive<Functionalities>({
@@ -403,6 +388,8 @@ export default defineComponent({
       SHARENOTES: () => toogleShareNotes(),
       USERLIST: () => toggleUsersList(),
       MINIMIZE: () => minimizeScreen(),
+      MIC: () => toggleMIC(),
+      WEBCAM: () => toggleCamera(),
     });
 
     let isActions = ref<boolean>(false);
@@ -433,8 +420,7 @@ export default defineComponent({
     const { openAdminPanel, setOpenAdminPanel, setTabSharedWarning } =
       usePanels();
     const { errorsCallback } = useJitsiError();
-    const { layout } = useLayout();
-    const { mainViewState } = useMainView();
+    const { isMultichatUser } = useLayout();
 
     const notificationCount = computed(() => {
       return userMe.roleId === 0 ? waitingParticipants.value.length : '';
@@ -496,15 +482,15 @@ export default defineComponent({
         : '';
     });
 
-    const modifierClass = computed(() => ({
-      '--presentation': layout.value == LAYOUT.PRESENTATION_LAYOUT,
-      '--screenPresentation':
-        layout.value == LAYOUT.PRESENTATION_LAYOUT &&
-        mainViewState.mode != MAIN_VIEW_MODE.NONE,
-    }));
+    // const modifierClass = computed(() => ({
+    //   '--presentation': layout.value == LAYOUT.PRESENTATION_LAYOUT,
+    //   '--screenPresentation':
+    //     layout.value == LAYOUT.PRESENTATION_LAYOUT &&
+    //     mainViewState.mode != MAIN_VIEW_MODE.NONE,
+    // }));
 
     watch(
-      () => _.cloneDeep(userMessages.value),
+      () => _cloneDeep(userMessages.value),
       (current, prev) => {
         if (
           current.length - prev.length > 0 &&
@@ -623,7 +609,7 @@ export default defineComponent({
         )
       ) {
         const downHand = { ...riseHand, eventType: 'HAND_DOWN' };
-        const handDown = _.debounce(() => {
+        const handDown = _debounce(() => {
           updateHandNotification(false);
           sendNotification(downHand.eventType, {
             value: JSON.stringify(downHand),
@@ -632,7 +618,7 @@ export default defineComponent({
         handDown();
         return;
       }
-      const handUp = _.debounce(() => {
+      const handUp = _debounce(() => {
         updateHandNotification(true);
         sendNotification(riseHand.eventType, {
           value: JSON.stringify(riseHand),
@@ -821,10 +807,10 @@ export default defineComponent({
       amountOfNewMessages,
       amountHandNotification,
       openAdminPanel,
-      modifierClass,
+      // modifierClass,
       target,
       screenMinimized,
-      multichatMinimized,
+      isMultichatUser,
     };
   },
 });

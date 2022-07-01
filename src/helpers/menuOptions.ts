@@ -1,4 +1,5 @@
 import { INTERACTION_TYPE_MENU_OPTIONS } from '@/utils/enums';
+
 export interface Options {
   id: string;
   iconName: string;
@@ -7,6 +8,7 @@ export interface Options {
   important: boolean;
   interaction?: string;
   active?: boolean;
+  admin?: boolean;
 }
 
 export interface MenuOptions {
@@ -18,13 +20,16 @@ export interface MenuOptions {
 
 export const menuOptions = {
   firstSection: [
-    /* {
+    {
       id: '1',
-      iconName: 'fullscreen',
-      description: 'Desplegar a pantalla completa',
+      iconName: 'fas fa-cog',
+      description: 'Panel de administrador',
       important: false,
+      admin: true,
+      interaction: INTERACTION_TYPE_MENU_OPTIONS.ADMIN_PANEL,
     },
-    */
+    /*
+     */
     // {
     //   id: '2',
     //   iconName: 'settings',
@@ -77,8 +82,9 @@ export const menuOptions = {
       id: '9',
       iconName: 'call_end',
       description: 'Finalizar reunión',
-      important: false,
+      important: true,
       interaction: INTERACTION_TYPE_MENU_OPTIONS.END,
+      admin: true,
     },
     {
       id: '10',
@@ -86,6 +92,7 @@ export const menuOptions = {
       description: 'Abandonar la reunión',
       important: true,
       interaction: INTERACTION_TYPE_MENU_OPTIONS.LEAVE,
+      admin: false,
     },
   ],
 };
