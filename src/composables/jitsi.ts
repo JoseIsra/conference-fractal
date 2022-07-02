@@ -770,6 +770,7 @@ export function useJitsi() {
       .stopRecording(recordSessionID.value)
       .then((info) => {
         console.log('END RECORDING', info);
+        window.xprops.handleCooperateKv();
       })
       .catch((error) => console.error(error));
   }

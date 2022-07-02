@@ -58,4 +58,5 @@ export interface ZoidProps {
   logUserExits?: (fractalUserIds: string[]) => void;
   isVisitor?: boolean;
   handleParticipantLeave(): void;
+  handleCooperateKv(): void;
 }
