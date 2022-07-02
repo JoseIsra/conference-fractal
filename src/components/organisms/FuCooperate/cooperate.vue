@@ -19,7 +19,6 @@
       icon="aspect_ratio"
       @click="updateScreenState"
     />
-
     <fu-cooperate-header v-show="renderHeader" />
 
     <fu-cooperate-menu-bar v-show="showMenuBar" />
@@ -51,7 +50,6 @@
 import {
   defineComponent,
   ref,
-  toRefs,
   onMounted,
   onBeforeUnmount,
   watch,
@@ -151,6 +149,8 @@ export default defineComponent({
         if (props.miniMode) {
           updateScreenTest(true);
         } else {
+          hideMenuBar.cancel();
+          showMenuBar.value = true;
           updateScreenTest(false);
         }
       }
@@ -255,7 +255,6 @@ export default defineComponent({
       functionsOnMenuBar,
       screenMinimized,
       updateScreenState,
-      ...toRefs(roomState),
       showParticipantPanel,
       showUsersVideoList,
       mainViewState,

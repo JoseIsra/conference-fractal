@@ -8,7 +8,7 @@
         alt="logo-collaborate"
       />
     </div>
-    <div v-show="!screenMinimized" class="m-header__recordingContainer">
+    <div v-show="false" class="m-header__recordingContainer">
       <fu-recording />
     </div>
     <!-- <div class="m-header__minimizeContainer"> -->

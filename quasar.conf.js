@@ -11,6 +11,7 @@ const fs = require('fs');
 const ospath = require('os');
 const { resolve } = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const { QSpinnerDots } = require('quasar');
 
 module.exports = configure(function (ctx) {
   return {
@@ -122,7 +123,7 @@ module.exports = configure(function (ctx) {
       // (like functional components as one of the examples),
       // you can manually specify Quasar components/directives to be available everywhere:
       //
-      // components: [],
+      components: ['QSpinnerDots'],
       // directives: [],
       // Quasar plugins
       plugins: ['LoadingBar', 'Notify'],

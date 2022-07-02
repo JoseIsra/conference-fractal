@@ -38,8 +38,8 @@
         </div>
       </template>
     </fu-prejoin-page>
-    <main v-else>
-      LOADING ....
+    <main v-else class="row items-center justify-center text-white fit">
+      LOADING
       <q-spinners-dots size="3rem" color="grey-8" />
     </main>
   </div>
