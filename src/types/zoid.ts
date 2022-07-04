@@ -62,4 +62,5 @@ export interface ZoidProps {
   miniMode?: boolean;
   onProps?: (cb: (arg: ZoidProps) => void) => void;
   multichat?: boolean;
+  handleCooperateKv(): void;
 }

@@ -107,11 +107,7 @@ export default defineComponent({
     }
 
     let roomId = window?.xprops?.roomId || (route.query.roomId as string) || '';
-    roomId = roomId
-      .trim()
-      .replace(regexConferenceName, '')
-      .replace(/\s/g, '_')
-      .toLowerCase();
+    roomId = roomId.trim().replace(regexConferenceName, '').replace(/\s/g, '-');
     const classroomId =
       window?.xprops?.classroomId || (route.query.classroomId as string) || '1';
 
@@ -407,6 +403,7 @@ export default defineComponent({
     };
     onMounted(() => {
       if (roomId) {
+        console.debug('NOMBRE DE ROOM', roomId);
         stablisConnection(roomId);
         setLoadingOrErrorMessage('Loading');
         // setIsLoadingOrError(false);

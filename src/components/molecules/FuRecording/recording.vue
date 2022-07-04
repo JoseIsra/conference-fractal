@@ -130,12 +130,6 @@ export default defineComponent({
 
     const stopRecording = () => {
       finishRecord();
-      /* watchParticipants.value?.(); */
-      // fetch(
-      //   `https://cooperate.fractalup.com/WebRTCAppEE/rest/v2/broadcasts/${userMe.id}/recording/false?recordType=webm`,
-      //   { method: 'PUT' }
-      // )
-      //   .then(() => {
       updateRoom({ isBeingRecorded: false });
       updateUserMe({
         isRecording: false,

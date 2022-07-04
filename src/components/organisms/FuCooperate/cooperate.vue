@@ -158,7 +158,6 @@ export default defineComponent({
     watch(
       () => screenMinimized.value,
       (value) => {
-        console.log('MINIMIZED VALUE', value);
         if (value) {
           hideMenuBar.cancel();
         } else {
