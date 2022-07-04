@@ -1,6 +1,7 @@
 <template>
   <div>
     <fu-prejoin-page
+      v-if="withPrejoinView"
       :name="name"
       class="p-cooperateLobby"
       :with-name="withName"
@@ -37,11 +38,15 @@
         </div>
       </template>
     </fu-prejoin-page>
+    <main v-else class="row items-center justify-center text-white fit">
+      LOADING
+      <q-spinners-dots size="3rem" color="grey-8" />
+    </main>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted } from 'vue';
 import FuPrejoinPage from 'organisms/FuPrejoinPage';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -60,8 +65,22 @@ export default defineComponent({
       window.xprops?.handleParticipantLeave();
     };
 
+    const withPrejoinView = ref(window?.xprops?.prejoinView || false);
+
     const roomId =
       window?.xprops?.roomId || (route.query.roomId as string) || '';
+
+    onMounted(() => {
+      if (!withPrejoinView.value) {
+        void router.push({
+          name: 'meet',
+          query: {
+            roomId: roomId,
+            streamName: name,
+          },
+        });
+      }
+    });
 
     const joinCollaborate = (name: string) => {
       void router.push({
@@ -79,6 +98,7 @@ export default defineComponent({
       name,
       joinCollaborate,
       withName,
+      withPrejoinView,
     };
   },
 });

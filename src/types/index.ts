@@ -132,6 +132,8 @@ export interface Functionalities {
   USERLIST?: () => void;
   CONNECTION?: () => void;
   MINIMIZE?: () => void;
+  MIC?: () => void;
+  WEBCAM?: () => void;
 }
 
 export interface lockAction {

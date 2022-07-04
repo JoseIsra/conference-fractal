@@ -1,13 +1,14 @@
 <template>
   <header class="m-header">
-    <div class="m-header__logo">
+    <div class="m-header__logo q-mt-md q-ml-sm">
       <img
+        loading="lazy"
         class="m-header__logo__image"
         src="https://encrypted.fractalup.com/file/MainPublic/fractalup_assets/logo/logo_cooperate.svg"
         alt="logo-collaborate"
       />
     </div>
-    <div class="m-header__recordingContainer">
+    <div v-show="false" class="m-header__recordingContainer">
       <fu-recording />
     </div>
     <!-- <div class="m-header__minimizeContainer"> -->
@@ -33,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import FuRecording from '@/components/molecules/FuRecording';
-import { useBoard } from '@/composables';
+import { useBoard, useScreen } from '@/composables';
 
 export default defineComponent({
   name: 'FuCooperateHeader',
@@ -42,9 +43,11 @@ export default defineComponent({
   },
   setup() {
     const { showBoard, toggleShowBoard } = useBoard();
+    const { screenMinimized } = useScreen();
     return {
       showBoard,
       toggleShowBoard,
+      screenMinimized,
     };
   },
 });

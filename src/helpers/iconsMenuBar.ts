@@ -66,8 +66,8 @@ export const iconsFunctions = {
     id: '5',
     onState: 'branding_watermark',
     offState: 'branding_watermark',
-    toolTipMessage: 'Minimizar ventana',
-    toolTipSecondMessage: 'Minimizar ventana',
+    toolTipMessage: 'Minimizar',
+    toolTipSecondMessage: 'Minimizar',
     interaction: INTERACTION_TYPE_MENU_BAR.MINIMIZE,
     behaviour: BEHAVIOUR_TYPE_MENU_BAR.ESPECIAL,
   },
@@ -94,14 +94,14 @@ export const iconsFunctions = {
 };
 
 export const iconsOptions = [
-  {
-    id: '1',
-    onState: 'fas fa-cog',
-    offState: 'fas fa-cog',
-    active: false,
-    toolTipMessage: 'Acciones',
-    ubication: 'actions',
-  },
+  // {
+  //   id: '1',
+  //   onState: 'fas fa-cog',
+  //   offState: 'fas fa-cog',
+  //   active: false,
+  //   toolTipMessage: 'Acciones',
+  //   ubication: 'actions',
+  // },
   {
     id: '2',
     onState: 'more_vert',

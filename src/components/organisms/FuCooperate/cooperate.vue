@@ -1,23 +1,27 @@
 <template>
   <section
     class="o-cooperate"
-    v-on="{ mousemove: !screenMinimized ? toogleMenuBar : null }"
-    v-touch:tap="toogleMenuBar"
+    v-touch:tap="handleTap"
     :style="[bgRenderStyles, heightObjectStyle]"
+    v-on="{
+      mousemove:
+        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
+    }"
     @click.self="closePanels"
   >
     <q-resize-observer @resize="onResize" />
-    <q-icon
-      name="fas fa-expand-alt"
-      size="24px"
-      class="o-cooperate__expand"
-      @click="updateScreenState"
+    <q-btn
       v-show="screenMinimized"
+      class="o-cooperate__expand absolute-top-right q-mt-sm q-mr-sm rounded-borders"
+      round
+      dense
+      flat
+      icon="aspect_ratio"
+      @click="updateScreenState"
     />
-
     <fu-cooperate-header v-show="renderHeader" />
 
-    <fu-cooperate-menu-bar v-show="showMenuBar && !screenMinimized" />
+    <fu-cooperate-menu-bar v-show="showMenuBar" />
     <transition :name="$q.screen.lt.sm ? 'dragged' : 'slide'">
       <fu-cooperate-side-bar v-show="isSidebarRender" />
     </transition>
@@ -46,7 +50,6 @@
 import {
   defineComponent,
   ref,
-  toRefs,
   onMounted,
   onBeforeUnmount,
   watch,
@@ -60,7 +63,7 @@ import FuHandNotification from 'atoms/FuHandNotification';
 import FuFullScreen from 'molecules/FuFullScreen';
 import FuWarning from 'atoms/FuWarning';
 import FuCooperateParticipantsPanel from '@/components/molecules/FuCooperateParticipantsPanel';
-import _ from 'lodash';
+import { debounce as _debounce } from 'lodash';
 import {
   useRoom,
   useScreen,
@@ -92,7 +95,7 @@ export default defineComponent({
     const { participantVideoTracks, participantAudioTracks } =
       useHandleParticipants();
     const { openTabSharedWarning } = usePanels();
-    const { layout, setNewLayout } = useLayout();
+    const { layout, setNewLayout, isMultichatUser } = useLayout();
     const $q = useQuasar();
     const { setShowExcaliBoard } = useBoard();
 
@@ -115,7 +118,7 @@ export default defineComponent({
       window.removeEventListener('resize', handleDeviceHeight);
     });
 
-    let showMenuBar = ref<boolean>(false);
+    let showMenuBar = ref<boolean>(true);
     let showUsersVideoList = ref<boolean>(false);
     const showHeader = ref<boolean>(true);
 
@@ -132,19 +135,33 @@ export default defineComponent({
       updateScreenState,
       setScreenDeviceOrientation,
       isMobile,
+      updateScreenTest,
     } = useScreen();
 
-    const hideMenuBar = _.debounce(() => {
+    const hideMenuBar = _debounce(() => {
       showMenuBar.value = false;
       showUsersVideoList.value = false;
       showHeader.value = false;
     }, 5000);
 
+    window?.xprops?.onProps?.((props) => {
+      if (isMultichatUser) {
+        if (props.miniMode) {
+          updateScreenTest(true);
+        } else {
+          hideMenuBar.cancel();
+          showMenuBar.value = true;
+          updateScreenTest(false);
+        }
+      }
+    });
     watch(
       () => screenMinimized.value,
       (value) => {
         if (value) {
           hideMenuBar.cancel();
+        } else {
+          showMenuBar.value = true;
         }
       }
     );
@@ -184,6 +201,16 @@ export default defineComponent({
       return layout.value == LAYOUT.PRESENTATION_LAYOUT;
     });
 
+    watch(
+      () => isPresentationLayout.value,
+      (value) => {
+        if (value) {
+          hideMenuBar.cancel();
+          showMenuBar.value = true;
+        }
+      }
+    );
+
     const renderHeader = computed(() => {
       return !screenMinimized.value &&
         $q.screen.lt.md &&
@@ -213,6 +240,13 @@ export default defineComponent({
       setSidebarState(false);
       setShowChat(false);
     };
+
+    const handleTap = () => {
+      if (isMobile()) {
+        toogleMenuBar();
+      }
+    };
+
     return {
       toogleMenuBar,
       showMenuBar,
@@ -220,7 +254,6 @@ export default defineComponent({
       functionsOnMenuBar,
       screenMinimized,
       updateScreenState,
-      ...toRefs(roomState),
       showParticipantPanel,
       showUsersVideoList,
       mainViewState,
@@ -235,6 +268,8 @@ export default defineComponent({
       bgRenderStyles,
       onResize,
       closePanels,
+      isPresentationLayout,
+      handleTap,
     };
   },
 });

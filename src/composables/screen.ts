@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { Screen } from 'quasar';
+import { Platform } from 'quasar';
 
 // screenState (FALSE > NOT MINIMIZED)
 const screenMinimized = ref<boolean>(false);
@@ -16,14 +16,17 @@ export const useScreen = () => {
   };
 
   const isMobile = () => {
-    return Screen.lt.md;
+    return Platform.is.mobile as boolean;
   };
-
+  const updateScreenTest = (payload: boolean) => {
+    screenMinimized.value = payload;
+  };
   return {
     screenMinimized,
     updateScreenState,
     setScreenDeviceOrientation,
     isLandscape,
     isMobile,
+    updateScreenTest,
   };
 };

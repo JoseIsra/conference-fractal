@@ -3,7 +3,7 @@
     <ul class="a-menu__optionList">
       <li
         class="a-menu__optionList__item"
-        v-for="option in options.firstSection"
+        v-for="option in firstSectionOptions"
         :key="option.id"
         @click="handleOptionSelected(option.interaction)"
       >
@@ -39,37 +39,15 @@
       </li>
       <q-separator spaced color="white" />
       <li
-        v-show="canEndCall"
         :class="[
           'a-menu__optionList__item',
-          { '--important': options.fourthSection[0].important },
+          { '--important': endVideoCallButton.important },
         ]"
-        @click="handleOptionSelected(options.fourthSection[0].interaction)"
+        @click="handleOptionSelected(endVideoCallButton.interaction)"
       >
-        <q-icon
-          :name="options.fourthSection[0].iconName"
-          size="18px"
-          color="white"
-        />
+        <q-icon :name="endVideoCallButton.iconName" size="18px" color="white" />
         <label class="a-menu__optionList__item__description">{{
-          options.fourthSection[0].description
-        }}</label>
-      </li>
-      <li
-        v-show="canLeaveCall"
-        :class="[
-          'a-menu__optionList__item',
-          { '--important': options.fourthSection[1].important },
-        ]"
-        @click="handleOptionSelected(options.fourthSection[1].interaction)"
-      >
-        <q-icon
-          :name="options.fourthSection[1].iconName"
-          size="18px"
-          color="white"
-        />
-        <label class="a-menu__optionList__item__description">{{
-          options.fourthSection[1].description
+          endVideoCallButton.description
         }}</label>
       </li>
     </ul>
@@ -113,6 +91,7 @@ import {
   useScreen,
 } from '@/composables';
 import { useLayout } from '@/composables/layout';
+import { usePanels } from '@/composables/panels';
 import { REASON_TO_LEAVE_ROOM, MAIN_VIEW_MODE, LAYOUT } from '@/utils/enums';
 import FuDeviceConfigurationModal from 'molecules/FuDeviceConfigurationModal';
 import { MenuOptionsInteractions } from '@/types/general';
@@ -134,7 +113,16 @@ export default defineComponent({
     const { setNewLayout, layout } = useLayout();
     const { showExcaliBoard, setShowExcaliBoard } = useBoard();
     const { isMobile } = useScreen();
+    const { setOpenAdminPanel } = usePanels();
     const excaliModal = ref(false);
+    const cardContent = ref('');
+    const target = ref(null);
+    const canEndCall = ref(userMe.roleId === 0);
+
+    const canLeaveCall = ref(
+      (userMe.roleId === 0 || userMe.roleId === 1) && !userMe.isHost
+    );
+    const renderExcaliOnMobile = ref(showExcaliBoard.value && isMobile());
     const optionsMethodsObject = reactive<MenuOptionsInteractions>({
       LEAVE: () => {
         participants.value.length > 0
@@ -152,9 +140,28 @@ export default defineComponent({
       BOARD: () => openExcaliBoard(),
       DEFAULT_LAYOUT: () => initDefaultLayout(),
       PRESENTATION_LAYOUT: () => initPresentationLayout(),
+      ADMIN_PANEL: () => initAdminPanel(),
     });
-    const cardContent = ref('');
-    const target = ref(null);
+
+    const boardOptionLabel = computed(() => {
+      return showExcaliBoard.value
+        ? options.value.secondSection[0].secondDescription
+        : options.value.secondSection[0].description;
+    });
+
+    const isAdmin = computed(() => userMe.roleId == 0);
+
+    const endVideoCallButton = computed(() => {
+      return options.value.fourthSection.find(
+        (op) => op.admin == (userMe.roleId == 0 && userMe.isHost)
+      );
+    });
+
+    const firstSectionOptions = computed(() => {
+      return options.value.firstSection.filter(
+        (op) => op.admin == isAdmin.value
+      );
+    });
 
     const openModalWithName = (modalName: string) => {
       openModal.value = true;
@@ -165,13 +172,6 @@ export default defineComponent({
       optionsMethodsObject[interaction as keyof MenuOptionsInteractions]();
       openOptionsMenu(false);
     };
-
-    const canEndCall = ref(userMe.roleId === 0);
-
-    const canLeaveCall = ref(
-      (userMe.roleId === 0 || userMe.roleId === 1) && !userMe.isHost
-    );
-    const renderExcaliOnMobile = ref(showExcaliBoard.value && isMobile());
 
     const openExcaliBoard = () => {
       setShowExcaliBoard(!showExcaliBoard.value);
@@ -198,12 +198,6 @@ export default defineComponent({
       setNewLayout(LAYOUT.PRESENTATION_LAYOUT);
     };
 
-    const boardOptionLabel = computed(() => {
-      return showExcaliBoard.value
-        ? options.value.secondSection[0].secondDescription
-        : options.value.secondSection[0].description;
-    });
-
     const closeExcaliBoard = () => {
       setShowExcaliBoard(false);
     };
@@ -220,6 +214,10 @@ export default defineComponent({
       openOptionsMenu(false);
     });
 
+    const initAdminPanel = () => {
+      setOpenAdminPanel(true);
+    };
+
     return {
       options,
       handleOptionSelected,
@@ -234,6 +232,9 @@ export default defineComponent({
       excaliModal,
       renderLabel,
       target,
+      userMe,
+      endVideoCallButton,
+      firstSectionOptions,
     };
   },
 });
