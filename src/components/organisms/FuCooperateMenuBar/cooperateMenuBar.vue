@@ -739,6 +739,7 @@ export default defineComponent({
     const { updateScreenState, screenMinimized } = useScreen();
 
     const minimizeScreen = () => {
+      console.log('to minimieze');
       updateScreenState();
       setSidebarState(false);
     };

@@ -5,7 +5,9 @@
     :style="[bgRenderStyles, heightObjectStyle]"
     v-on="{
       mousemove:
-        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
+        screenMinimized || !isPresentationLayout
+          ? toogleMenuBar
+          : toogleMenuBar,
     }"
     @click.self="closePanels"
   >
@@ -145,7 +147,8 @@ export default defineComponent({
     }, 5000);
 
     window?.xprops?.onProps?.((props) => {
-      if (isMultichatUser) {
+      console.log('ON PROPS ZOID no multichat', isMultichatUser.value);
+      if (isMultichatUser.value) {
         if (props.miniMode) {
           updateScreenTest(true);
         } else {
