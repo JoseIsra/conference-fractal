@@ -455,6 +455,7 @@ export default defineComponent({
       localVideoTrack,
       setLocalCameraLocked,
       updateUserMe,
+      setLocalScreenSharingLocked,
     } = useUserMe();
 
     const canSeeActionsMenu = ref(userMe.roleId === 0);
@@ -567,6 +568,7 @@ export default defineComponent({
       if (userMe.isCameraOn) {
         setVideoActivatedState(false);
         turnOffLocalCamera();
+        setLocalScreenSharingLocked(false);
         sendNotification('TURN_OFF_CAMERA', { value: userMe.id });
       } else {
         //send notification
@@ -574,6 +576,7 @@ export default defineComponent({
         void nextTick(() => {
           turnOnLocalCamera();
         });
+        setLocalScreenSharingLocked(true);
         setVideoActivatedState(true);
         sendNotification('TURN_ON_CAMERA', { value: userMe.id });
       }

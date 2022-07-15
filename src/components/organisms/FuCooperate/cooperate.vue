@@ -5,9 +5,7 @@
     :style="[bgRenderStyles, heightObjectStyle]"
     v-on="{
       mousemove:
-        screenMinimized || !isPresentationLayout
-          ? toogleMenuBar
-          : toogleMenuBar,
+        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
     }"
     @click.self="closePanels"
   >
