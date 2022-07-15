@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive, computed } from 'vue';
-import { menuOptions, MenuOptions } from '@/helpers/menuOptions';
+import { menuOptions, MenuOptions, Options } from '@/helpers/menuOptions';
 import FuDeleteRoomModal from 'molecules/FuDeleteRoomModal';
 import {
   useInitWebRTC,
@@ -154,7 +154,7 @@ export default defineComponent({
     const endVideoCallButton = computed(() => {
       return options.value.fourthSection.find(
         (op) => op.admin == (userMe.roleId == 0 && userMe.isHost)
-      );
+      ) as Options;
     });
 
     const firstSectionOptions = computed(() => {
@@ -202,7 +202,7 @@ export default defineComponent({
       setShowExcaliBoard(false);
     };
 
-    const renderLabel = (interaction: string) => {
+    const renderLabel = (interaction?: string) => {
       return (
         (interaction == 'DEFAULT_LAYOUT' &&
           layout.value == LAYOUT.DEFAULT_LAYOUT) ||

@@ -33,10 +33,9 @@ export function useJitsiError() {
         setLoadingOrErrorMessage('Dispositivos bloqueados');
         updateUserMe({
           hasWebcam: false,
-          hasMic: false,
         });
         setTimeout(() => {
-          getLocalTracks(['']);
+          getLocalTracks(['audio']);
         }, 1000);
         // } else if (message.includes('audio')) {
         //   updateUserMe({

@@ -5,7 +5,7 @@
       class="a-menuBar__box row items-center full-width justify-center"
     >
       <section
-        class="a-menuBar__box__main row absolute items-center justify-center"
+        class="a-menuBar__box__main row absolute items-center justify-center q-pa-xs"
       >
         <aside class="a-menuBar__periferics">
           <q-btn
@@ -423,7 +423,7 @@ export default defineComponent({
     const { isMultichatUser } = useLayout();
 
     const notificationCount = computed(() => {
-      return userMe.roleId === 0 ? waitingParticipants.value.length : '';
+      return userMe.roleId === 0 ? waitingParticipants.value.length : 0;
     });
 
     const amountHandNotification = computed(() => {

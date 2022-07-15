@@ -430,6 +430,10 @@ export default defineComponent({
       diconnectAll();
     });
 
+    window.addEventListener('beforeunload', () => {
+      diconnectAll();
+    });
+
     const handleZoidLeaveCall = () =>
       window.xprops?.handleLeaveCall?.(REASON_TO_LEAVE_ROOM.JUST_LEAVE);
 

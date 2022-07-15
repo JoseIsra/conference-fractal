@@ -211,9 +211,10 @@ export function useJitsi() {
 
   function handleRemoteTracks(track: JitsiRemoteTrack) {
     const participantID = track.getParticipantId();
-    console.log('ID DEL REMOTO', participantID);
-    // console.log('TRACK REMOTO', track);
-    console.log('TRACK type REMOTO', track.getType());
+    console.log('HANDLE TRACKS REMOTOS: ID-TYPE', {
+      participantID,
+      type: track.getType(),
+    });
     if (track.getType() == 'audio') {
       void nextTick(() => {
         track.attach(participantAudioTracks[`audio-${participantID}`]);
@@ -321,7 +322,7 @@ export function useJitsi() {
     tracks: JitsiLocalTrack[] | JitsiConferenceErrors
   ) {
     // show conference
-    setIsLoadingOrError(false);
+    //setIsLoadingOrError(false);
 
     if (!tracks.length) return;
 
@@ -359,7 +360,21 @@ export function useJitsi() {
   function onConferenceJoined() {
     console.log(' 🚀UNIÉNDOSE A LA CONFERENCIA ');
     joined.value = true;
-    getLocalTracks();
+    localTracks.value.forEach((track) => {
+      room
+        .addTrack(track)
+        .then(() => {
+          console.log(
+            'TRACK UNIDO A LA SALA EN conferenceJoined-joined?',
+            joined.value
+          );
+          // if (track.getType() == 'video') {
+          // }
+          void track.mute();
+        })
+        .catch((error) => console.error(error));
+      setIsLoadingOrError(false);
+    });
     requestInformationOnRoom();
   }
 
@@ -367,7 +382,12 @@ export function useJitsi() {
     _arg: string,
     user: JitsiParticipant & { _tracks: JitsiTrack[] }
   ) {
-    console.log('USERJOINED', { id: _arg, user, date: Date.now() });
+    console.log('Nuevo user en sala 🤔, EVENTO: USER JOINED', {
+      id: _arg,
+      user,
+      date: Date.now(),
+      tracks: user._tracks,
+    });
     if (!user.getDisplayName()) return;
     const dataUser = JSON.parse(user.getDisplayName()) as User;
     addParticipant({
@@ -808,7 +828,6 @@ export function useJitsi() {
         console.table({ actor, reason });
       }
     );
-    void room.setSenderVideoConstraint(360);
     commandsList.forEach((command) => {
       room.addCommandListener(command.name, command.listener);
     });
@@ -816,6 +835,8 @@ export function useJitsi() {
     setUserBackgroundColor(userMe.id);
     room.setDisplayName(JSON.stringify(userMe));
     room.join('');
+    void room.setSenderVideoConstraint(720); // Send at most 720p
+    void room.setReceiverVideoConstraint(360); // Receive at most 360p for each participant
   }
 
   function diconnectAll() {
@@ -854,6 +875,7 @@ export function useJitsi() {
     );
 
     connection.connect({});
+    getLocalTracks();
   };
 
   return {

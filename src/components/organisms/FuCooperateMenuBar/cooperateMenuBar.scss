@@ -11,7 +11,6 @@
       bottom: 10px;
       background: linear-gradient(350deg, mediumslateblue 0%, #0099ff 75%);
       border-radius: 7px;
-      padding: 10px;
     }
   }
   .active,
@@ -22,7 +21,6 @@
 
   &__icon {
     color: rgba(255, 255, 255, 0.6) !important;
-    margin: 0 0.3rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,7 +59,7 @@
     justify-content: center;
     align-items: center;
     flex: 0.6;
-    margin: 0 1.2rem;
+    margin: 0 0.5rem;
     &__responsive {
       display: none;
     }

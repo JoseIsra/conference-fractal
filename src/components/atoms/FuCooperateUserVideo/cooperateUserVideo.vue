@@ -58,7 +58,7 @@
       </div>
     </div>
     <div
-      v-for="participant in usersOnScreen"
+      v-for="participant in admittedParticipants"
       :key="participant.id"
       :class="[
         'userVideoBox text-white',
@@ -86,7 +86,7 @@
           class="userVideoBox__avatar__info absolute row items-center q-px-xs"
         >
           <label class="userVideoBox__avatar__info__userName">
-            {{ participant.name }}
+            {{ participant.id }}-{{ participant.name }}
           </label>
           <div class="userVideoBox__avatar__info__iconWrapper text-center">
             <q-icon
@@ -121,7 +121,7 @@
       ></audio>
       <div v-show="participant.isVideoActivated">
         <div class="userVideoBox__avatar__info__userName --video">
-          {{ participant.name }}
+          {{ participant.id }}-{{ participant.name }}
         </div>
       </div>
 
@@ -165,13 +165,52 @@
       </q-btn>
     </div>
     <!--  -->
-    <div class="userVideoBox --moreUsers" v-show="moreUsersIndicator">
+    <div class="userVideoBox --moreUsers" v-show="false">
       +{{ moreUsersAmount }}
     </div>
-    <div v-for="(participant, index) in invisibleSlots" :key="index">
+    <!-- <div
+      v-for="(participant, index) in invisibleSlots"
+      :key="index"
+      :class="[
+        'userVideoBox text-white',
+        { fade: mainViewState.pinnedUsers.includes(participant.id) },
+      ]"
+      :style="backgroundColorSelected(participant.id)"
+    >
+      <div
+        v-show="!participant.isVideoActivated"
+        class="userVideoBox__avatar relative-position"
+      >
+        <figure class="userVideoBox__avatar__imageBox">
+          <img
+            v-if="participant.avatar"
+            class="userVideoBox__avatar__imageBox__image"
+            :src="participant.avatar"
+          />
+          <q-spinner-oval
+            v-if="!participant.avatar"
+            color="primary"
+            size="2em"
+          />
+        </figure>
+        <div
+          class="userVideoBox__avatar__info absolute row items-center q-px-xs"
+        >
+          <label class="userVideoBox__avatar__info__userName">
+            {{ participant.name }}
+          </label>
+          <div class="userVideoBox__avatar__info__iconWrapper text-center">
+            <q-icon
+              :name="participant.isMicOn ? 'mic' : 'mic_off'"
+              size="18px"
+              color="white"
+            />
+          </div>
+        </div>
+      </div>
       <video
+        v-show="participant.isVideoActivated"
         :id="'video-' + participant.id"
-        :style="{ display: 'none' }"
         autoplay
         playsinline
         :ref="
@@ -190,7 +229,12 @@
         "
         autoplay
       ></audio>
-    </div>
+      <div v-show="participant.isVideoActivated">
+        <div class="userVideoBox__avatar__info__userName --video">
+          {{ participant.name }}
+        </div>
+      </div>
+    </div> -->
   </section>
 </template>
 
