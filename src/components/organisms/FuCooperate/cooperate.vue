@@ -5,9 +5,7 @@
     :style="[bgRenderStyles, heightObjectStyle]"
     v-on="{
       mousemove:
-        screenMinimized || !isPresentationLayout
-          ? toogleMenuBar
-          : toogleMenuBar,
+        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
     }"
     @click.self="closePanels"
   >
@@ -164,6 +162,7 @@ export default defineComponent({
         if (value) {
           hideMenuBar.cancel();
         } else {
+          hideMenuBar.cancel();
           showMenuBar.value = true;
         }
       }
