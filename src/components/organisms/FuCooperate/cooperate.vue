@@ -172,7 +172,7 @@ export default defineComponent({
       () => mainViewState.mode,
       (value) => {
         if (value !== 0 && isMobile()) {
-          setNewLayout(LAYOUT.PRESENTATION_LAYOUT);
+          setNewLayout(LAYOUT.ROW_LAYOUT);
         }
       }
     );
@@ -200,7 +200,7 @@ export default defineComponent({
     });
 
     const isPresentationLayout = computed(() => {
-      return layout.value == LAYOUT.PRESENTATION_LAYOUT;
+      return layout.value == LAYOUT.ROW_LAYOUT;
     });
 
     watch(
@@ -216,7 +216,7 @@ export default defineComponent({
     const renderHeader = computed(() => {
       return !screenMinimized.value &&
         $q.screen.lt.md &&
-        layout.value == LAYOUT.PRESENTATION_LAYOUT
+        layout.value == LAYOUT.ROW_LAYOUT
         ? showHeader.value
         : isPresentationLayout.value;
     });
@@ -233,7 +233,7 @@ export default defineComponent({
 
     const onResize = (size: { height: number; width: number }) => {
       if (size.width < 1024) {
-        setNewLayout(LAYOUT.PRESENTATION_LAYOUT);
+        setNewLayout(LAYOUT.ROW_LAYOUT);
         setShowExcaliBoard(false);
       }
     };

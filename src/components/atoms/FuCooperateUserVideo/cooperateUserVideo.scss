@@ -85,7 +85,7 @@
   }
 }
 
-.defaultLayout {
+.gridLayout {
   width: 100%;
   position: absolute;
   display: grid;
@@ -130,7 +130,7 @@
   }
 }
 @media only screen and (min-width: 958px) {
-  .defaultLayout {
+  .gridLayout {
     &.--2users {
       grid-template-columns: 50% 50%;
     }
@@ -155,7 +155,7 @@
   }
 }
 
-.presentationLayout {
+.rowLayout {
   width: 100%;
   position: absolute;
   --bottom: 65px;

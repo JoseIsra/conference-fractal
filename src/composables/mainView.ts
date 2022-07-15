@@ -78,7 +78,7 @@ export function useMainView() {
       });
     }
     if (Screen.lt.md) {
-      setNewLayout(LAYOUT.PRESENTATION_LAYOUT);
+      setNewLayout(LAYOUT.ROW_LAYOUT);
     }
   };
 

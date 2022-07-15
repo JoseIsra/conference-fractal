@@ -58,7 +58,7 @@ export default defineComponent({
       }
     };
     const layoutStyle = computed(() => ({
-      '--split': layout.value == LAYOUT.DEFAULT_LAYOUT && !isMobile(),
+      '--split': layout.value == LAYOUT.GRID_LAYOUT && !isMobile(),
     }));
 
     const renderExcaliOnDesktop = computed(() => {

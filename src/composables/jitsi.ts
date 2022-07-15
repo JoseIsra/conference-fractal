@@ -368,13 +368,11 @@ export function useJitsi() {
             'TRACK UNIDO A LA SALA EN conferenceJoined-joined?',
             joined.value
           );
-          // if (track.getType() == 'video') {
-          // }
           void track.mute();
         })
         .catch((error) => console.error(error));
-      setIsLoadingOrError(false);
     });
+    setIsLoadingOrError(false);
     requestInformationOnRoom();
   }
 

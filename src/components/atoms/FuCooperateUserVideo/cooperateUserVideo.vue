@@ -7,7 +7,7 @@
       :class="[
         'userVideoBox',
         { fade: mainViewState.pinnedUsers.includes(userMe.id) },
-        { '--third': totalUsers == 3 && defaultLayout },
+        { '--third': totalUsers == 3 && isGridLayout },
       ]"
       :style="backgroundColorSelected(userMe.id)"
     >
@@ -58,7 +58,7 @@
       </div>
     </div>
     <div
-      v-for="participant in admittedParticipants"
+      v-for="participant in visibleParticipants"
       :key="participant.id"
       :class="[
         'userVideoBox text-white',
@@ -165,49 +165,12 @@
       </q-btn>
     </div>
     <!--  -->
-    <div class="userVideoBox --moreUsers" v-show="false">
-      +{{ moreUsersAmount }}
-    </div>
-    <!-- <div
-      v-for="(participant, index) in invisibleSlots"
+    <div class="userVideoBox --moreUsers" v-show="false">+</div>
+    <div
+      v-for="(participant, index) in invisibleParticipants"
       :key="index"
-      :class="[
-        'userVideoBox text-white',
-        { fade: mainViewState.pinnedUsers.includes(participant.id) },
-      ]"
-      :style="backgroundColorSelected(participant.id)"
+      style="display: none"
     >
-      <div
-        v-show="!participant.isVideoActivated"
-        class="userVideoBox__avatar relative-position"
-      >
-        <figure class="userVideoBox__avatar__imageBox">
-          <img
-            v-if="participant.avatar"
-            class="userVideoBox__avatar__imageBox__image"
-            :src="participant.avatar"
-          />
-          <q-spinner-oval
-            v-if="!participant.avatar"
-            color="primary"
-            size="2em"
-          />
-        </figure>
-        <div
-          class="userVideoBox__avatar__info absolute row items-center q-px-xs"
-        >
-          <label class="userVideoBox__avatar__info__userName">
-            {{ participant.name }}
-          </label>
-          <div class="userVideoBox__avatar__info__iconWrapper text-center">
-            <q-icon
-              :name="participant.isMicOn ? 'mic' : 'mic_off'"
-              size="18px"
-              color="white"
-            />
-          </div>
-        </div>
-      </div>
       <video
         v-show="participant.isVideoActivated"
         :id="'video-' + participant.id"
@@ -229,12 +192,7 @@
         "
         autoplay
       ></audio>
-      <div v-show="participant.isVideoActivated">
-        <div class="userVideoBox__avatar__info__userName --video">
-          {{ participant.name }}
-        </div>
-      </div>
-    </div> -->
+    </div>
   </section>
 </template>
 
@@ -277,13 +235,13 @@ export default defineComponent({
     });
 
     const layoutStyle = computed(() => ({
-      defaultLayout: layout.value == LAYOUT.DEFAULT_LAYOUT,
-      presentationLayout: layout.value == LAYOUT.PRESENTATION_LAYOUT,
+      gridLayout: layout.value == LAYOUT.GRID_LAYOUT,
+      rowLayout: layout.value == LAYOUT.ROW_LAYOUT,
       fade: screenMinimized.value,
       '--split':
-        layout.value == LAYOUT.DEFAULT_LAYOUT &&
+        layout.value == LAYOUT.GRID_LAYOUT &&
         mainViewState.mode !== MAIN_VIEW_MODE.NONE,
-      '--moreviews': totalUsers.value >= 5 && defaultLayout.value,
+      '--moreviews': totalUsers.value >= 5 && isGridLayout.value,
     }));
 
     watch(
@@ -303,12 +261,12 @@ export default defineComponent({
       return admittedParticipants.value.length + 1;
     });
 
-    const defaultLayout = computed(() => {
-      return layout.value == LAYOUT.DEFAULT_LAYOUT;
+    const isGridLayout = computed(() => {
+      return layout.value == LAYOUT.GRID_LAYOUT;
     });
 
     const usersDistributionStyle = computed(
-      () => defaultLayout.value && `--${totalUsers.value}users`
+      () => isGridLayout.value && `--${totalUsers.value}users`
     );
 
     const backgroundColorSelected = (id: string) => {
@@ -317,107 +275,159 @@ export default defineComponent({
       };
     };
 
-    const moreUsersIndicator = computed(() => {
-      return defaultLayout.value
-        ? moreUsersDefaultLayout.value
-        : moreUsersPresentationLayout.value;
-    });
-
-    const moreUsersPresentationLayout = computed(() => {
+    // Manage row layout
+    const visibleParticipantsRowLayout = computed(() => {
       return $q.screen.lt.md
-        ? admittedParticipants.value.length > 1
-        : admittedParticipants.value.length > 5;
+        ? admittedParticipants.value.slice(0, 1)
+        : admittedParticipants.value.slice(0, 5);
     });
 
-    const moreUsersDefaultLayoutSplitted = computed(() => {
+    const invisbleParticipantsRowLayout = computed(() => {
+      return $q.screen.lt.md
+        ? admittedParticipants.value.slice(1)
+        : admittedParticipants.value.slice(5);
+    });
+
+    // manage grid layout
+    const visibleParticipantsFullScreen = computed(() => {
       return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-        ? admittedParticipants.value.length > 6
-        : admittedParticipants.value.length > 7;
+        ? admittedParticipants.value.slice(0, 7)
+        : admittedParticipants.value.slice(0, 8);
     });
 
-    const moreUsersDefaultLayout = computed(() => {
+    const visibleParticipantsGridLayout = computed(() => {
       return $q.screen.lt.md
-        ? admittedParticipants.value.length > 4
-        : moreUsersDefaultLayoutSplitted.value;
+        ? admittedParticipants.value.slice(0, 4)
+        : visibleParticipantsFullScreen.value;
     });
 
-    const moreUsersAmountPresentationLayout = computed(() => {
-      return $q.screen.lt.md
-        ? admittedParticipants.value.length - 1
-        : admittedParticipants.value.length - 5;
-    });
-
-    const moreUsersAmountDefaultLayoutSplitted = computed(() => {
+    const invisibleParticipantsFullScreen = computed(() => {
       return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-        ? admittedParticipants.value.length - 6
-        : admittedParticipants.value.length - 7;
+        ? admittedParticipants.value.slice(7)
+        : admittedParticipants.value.slice(8);
     });
-
-    const moreUsersAmountDefaultLayout = computed(() => {
+    const invisibleParticipantsGridLayout = computed(() => {
       return $q.screen.lt.md
-        ? admittedParticipants.value.length - 4
-        : moreUsersAmountDefaultLayoutSplitted.value;
+        ? admittedParticipants.value.slice(4)
+        : invisibleParticipantsFullScreen.value;
     });
 
-    const moreUsersAmount = computed(() => {
-      return defaultLayout.value
-        ? moreUsersAmountDefaultLayout.value
-        : moreUsersAmountPresentationLayout.value;
+    // visible users on screen
+    const visibleParticipants = computed(() => {
+      return isGridLayout.value
+        ? visibleParticipantsGridLayout.value
+        : visibleParticipantsRowLayout.value;
     });
 
-    const userAmountPresentationLayout = computed(() => {
-      return $q.screen.lt.md
-        ? admittedParticipants.value.slice(-1)
-        : admittedParticipants.value.slice(-5);
+    // no visible users on screen
+    const invisibleParticipants = computed(() => {
+      return isGridLayout.value
+        ? invisibleParticipantsGridLayout.value
+        : invisbleParticipantsRowLayout.value;
     });
 
-    const userAmountDefaultLayout = computed(() => {
-      return $q.screen.lt.md
-        ? admittedParticipants.value.slice(-4)
-        : userAmountDefaultLayoutSplitted.value;
-    });
+    // const moreUsersIndicator = computed(() => {
+    //   return defaultLayout.value
+    //     ? moreUsersDefaultLayout.value
+    //     : moreUsersPresentationLayout.value;
+    // });
 
-    const userAmountDefaultLayoutSplitted = computed(() => {
-      return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-        ? admittedParticipants.value.slice(-6)
-        : admittedParticipants.value.slice(-7);
-    });
+    // const moreUsersPresentationLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.length > 1
+    //     : admittedParticipants.value.length > 5;
+    // });
 
-    const usersOnScreen = computed(() => {
-      return defaultLayout.value
-        ? userAmountDefaultLayout.value
-        : userAmountPresentationLayout.value;
-    });
+    // const moreUsersDefaultLayoutSplitted = computed(() => {
+    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
+    //     ? admittedParticipants.value.length > 6
+    //     : admittedParticipants.value.length > 7;
+    // });
 
-    const invisibleSlotsDefaultLayoutSplitted = computed(() => {
-      return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-        ? admittedParticipants.value.slice(0, -6)
-        : admittedParticipants.value.slice(0, -7);
-    });
+    // const moreUsersDefaultLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.length > 4
+    //     : moreUsersDefaultLayoutSplitted.value;
+    // });
 
-    const invisibleSlotsDefaultLayout = computed(() => {
-      return $q.screen.lt.md
-        ? admittedParticipants.value.slice(0, -4)
-        : invisibleSlotsDefaultLayoutSplitted.value;
-    });
+    // const moreUsersAmountPresentationLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.length - 1
+    //     : admittedParticipants.value.length - 5;
+    // });
 
-    const invisibleSlotsPresentationLayout = computed(() => {
-      return $q.screen.lt.md
-        ? admittedParticipants.value.slice(0, -1)
-        : admittedParticipants.value.slice(0, -5);
-    });
+    // const moreUsersAmountDefaultLayoutSplitted = computed(() => {
+    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
+    //     ? admittedParticipants.value.length - 6
+    //     : admittedParticipants.value.length - 7;
+    // });
 
-    const invisibleSlots = computed(() => {
-      return defaultLayout.value
-        ? invisibleSlotsDefaultLayout.value
-        : invisibleSlotsPresentationLayout.value;
-    });
+    // const moreUsersAmountDefaultLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.length - 4
+    //     : moreUsersAmountDefaultLayoutSplitted.value;
+    // });
+
+    // const moreUsersAmount = computed(() => {
+    //   return defaultLayout.value
+    //     ? moreUsersAmountDefaultLayout.value
+    //     : moreUsersAmountPresentationLayout.value;
+    // });
+
+    // const userAmountPresentationLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.slice(-1)
+    //     : admittedParticipants.value.slice(-5);
+    // });
+
+    // const userAmountDefaultLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.slice(-4)
+    //     : userAmountDefaultLayoutSplitted.value;
+    // });
+
+    // const userAmountDefaultLayoutSplitted = computed(() => {
+    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
+    //     ? admittedParticipants.value.slice(-6)
+    //     : admittedParticipants.value.slice(-7);
+    // });
+
+    // const usersOnScreen = computed(() => {
+    //   return defaultLayout.value
+    //     ? userAmountDefaultLayout.value
+    //     : userAmountPresentationLayout.value;
+    // });
+
+    // const invisibleSlotsDefaultLayoutSplitted = computed(() => {
+    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
+    //     ? admittedParticipants.value.slice(0, -6)
+    //     : admittedParticipants.value.slice(0, -7);
+    // });
+
+    // const invisibleSlotsDefaultLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.slice(0, -4)
+    //     : invisibleSlotsDefaultLayoutSplitted.value;
+    // });
+
+    // const invisibleSlotsPresentationLayout = computed(() => {
+    //   return $q.screen.lt.md
+    //     ? admittedParticipants.value.slice(0, -1)
+    //     : admittedParticipants.value.slice(0, -5);
+    // });
+
+    // const invisibleSlots = computed(() => {
+    //   return defaultLayout.value
+    //     ? invisibleSlotsDefaultLayout.value
+    //     : invisibleSlotsPresentationLayout.value;
+    // });
 
     return {
+      visibleParticipants,
+      invisibleParticipants,
       userMe,
       admittedParticipants,
       streamIdPinned,
-      userAmountPresentationLayout,
       styleOnMobile,
       screenMinimized,
       addPinnedUser,
@@ -431,15 +441,11 @@ export default defineComponent({
       participantVideoTracks,
       backgroundColorSelected,
       layoutStyle,
-      usersOnScreen,
-      moreUsersIndicator,
-      moreUsersAmount,
       layout,
       LAYOUT,
       usersDistributionStyle,
       totalUsers,
-      defaultLayout,
-      invisibleSlots,
+      isGridLayout,
     };
   },
 });
