@@ -373,8 +373,9 @@ export function useJitsi() {
           void track.mute();
         })
         .catch((error) => console.error(error));
-      setIsLoadingOrError(false);
     });
+    setIsLoadingOrError(false);
+
     requestInformationOnRoom();
   }
 
