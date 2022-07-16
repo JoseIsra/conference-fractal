@@ -165,14 +165,15 @@
       </q-btn>
     </div>
     <!--  -->
-    <div class="userVideoBox --moreUsers" v-show="false">+</div>
+    <div class="userVideoBox --moreUsers" v-show="indicator > 0">
+      + {{ indicator }}
+    </div>
     <div
       v-for="(participant, index) in invisibleParticipants"
       :key="index"
       style="display: none"
     >
       <video
-        v-show="participant.isVideoActivated"
         :id="'video-' + participant.id"
         autoplay
         playsinline
@@ -257,6 +258,14 @@ export default defineComponent({
       }
     );
 
+    watch(
+      () => layout.value,
+      () => {
+        console.log('cambio layout?');
+        console.log('currentvisisble', visibleParticipants.value);
+      }
+    );
+
     const totalUsers = computed(() => {
       return admittedParticipants.value.length + 1;
     });
@@ -279,13 +288,13 @@ export default defineComponent({
     const visibleParticipantsRowLayout = computed(() => {
       return $q.screen.lt.md
         ? admittedParticipants.value.slice(0, 1)
-        : admittedParticipants.value.slice(0, 5);
+        : admittedParticipants.value.slice(0, 4);
     });
 
     const invisbleParticipantsRowLayout = computed(() => {
       return $q.screen.lt.md
         ? admittedParticipants.value.slice(1)
-        : admittedParticipants.value.slice(5);
+        : admittedParticipants.value.slice(4);
     });
 
     // manage grid layout
@@ -326,103 +335,12 @@ export default defineComponent({
         : invisbleParticipantsRowLayout.value;
     });
 
-    // const moreUsersIndicator = computed(() => {
-    //   return defaultLayout.value
-    //     ? moreUsersDefaultLayout.value
-    //     : moreUsersPresentationLayout.value;
-    // });
-
-    // const moreUsersPresentationLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.length > 1
-    //     : admittedParticipants.value.length > 5;
-    // });
-
-    // const moreUsersDefaultLayoutSplitted = computed(() => {
-    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-    //     ? admittedParticipants.value.length > 6
-    //     : admittedParticipants.value.length > 7;
-    // });
-
-    // const moreUsersDefaultLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.length > 4
-    //     : moreUsersDefaultLayoutSplitted.value;
-    // });
-
-    // const moreUsersAmountPresentationLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.length - 1
-    //     : admittedParticipants.value.length - 5;
-    // });
-
-    // const moreUsersAmountDefaultLayoutSplitted = computed(() => {
-    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-    //     ? admittedParticipants.value.length - 6
-    //     : admittedParticipants.value.length - 7;
-    // });
-
-    // const moreUsersAmountDefaultLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.length - 4
-    //     : moreUsersAmountDefaultLayoutSplitted.value;
-    // });
-
-    // const moreUsersAmount = computed(() => {
-    //   return defaultLayout.value
-    //     ? moreUsersAmountDefaultLayout.value
-    //     : moreUsersAmountPresentationLayout.value;
-    // });
-
-    // const userAmountPresentationLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.slice(-1)
-    //     : admittedParticipants.value.slice(-5);
-    // });
-
-    // const userAmountDefaultLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.slice(-4)
-    //     : userAmountDefaultLayoutSplitted.value;
-    // });
-
-    // const userAmountDefaultLayoutSplitted = computed(() => {
-    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-    //     ? admittedParticipants.value.slice(-6)
-    //     : admittedParticipants.value.slice(-7);
-    // });
-
-    // const usersOnScreen = computed(() => {
-    //   return defaultLayout.value
-    //     ? userAmountDefaultLayout.value
-    //     : userAmountPresentationLayout.value;
-    // });
-
-    // const invisibleSlotsDefaultLayoutSplitted = computed(() => {
-    //   return mainViewState.mode !== MAIN_VIEW_MODE.NONE
-    //     ? admittedParticipants.value.slice(0, -6)
-    //     : admittedParticipants.value.slice(0, -7);
-    // });
-
-    // const invisibleSlotsDefaultLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.slice(0, -4)
-    //     : invisibleSlotsDefaultLayoutSplitted.value;
-    // });
-
-    // const invisibleSlotsPresentationLayout = computed(() => {
-    //   return $q.screen.lt.md
-    //     ? admittedParticipants.value.slice(0, -1)
-    //     : admittedParticipants.value.slice(0, -5);
-    // });
-
-    // const invisibleSlots = computed(() => {
-    //   return defaultLayout.value
-    //     ? invisibleSlotsDefaultLayout.value
-    //     : invisibleSlotsPresentationLayout.value;
-    // });
+    const indicator = computed(() => {
+      return invisibleParticipants.value.length;
+    });
 
     return {
+      indicator,
       visibleParticipants,
       invisibleParticipants,
       userMe,

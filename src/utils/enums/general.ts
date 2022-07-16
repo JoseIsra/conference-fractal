@@ -93,3 +93,7 @@ export enum LAYOUT {
   GRID_LAYOUT = 'GRID_LAYOUT',
   ROW_LAYOUT = 'ROW_LAYOUT',
 }
+
+export enum ERRORS {
+  RELOAD,
+}

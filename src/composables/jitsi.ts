@@ -43,6 +43,7 @@ import {
   MediaType,
   MAIN_VIEW_MODE,
   MAIN_VIEW_LOCKED_TYPE,
+  ERRORS,
 } from '@/utils/enums';
 import videojs from 'video.js';
 import { successMessage } from '@/utils/notify';
@@ -87,7 +88,7 @@ const { setUserMessage, amountOfNewMessages, acumulateMessages } =
 const { externalVideo, updateExternalVideoState } = useExternalVideo();
 
 const { errorsCallback } = useJitsiError();
-const { setIsLoadingOrError } = useAuthState();
+const { setIsLoadingOrError, setErrorType } = useAuthState();
 const { mainViewState, updateMainViewState } = useMainView();
 const { setUserBackgroundColor } = useUserColor();
 const { updateBgUrl, updateBgSize, setRecordSessionId, recordSessionID } =
@@ -358,8 +359,12 @@ export function useJitsi() {
   }
 
   function onConferenceJoined() {
-    console.log(' 🚀UNIÉNDOSE A LA CONFERENCIA ');
+    console.log(
+      ' 🚀UNIÉNDOSE A LA CONFERENCIA,tracks locales',
+      localTracks.value
+    );
     joined.value = true;
+    setIsLoadingOrError(false);
     localTracks.value.forEach((track) => {
       room
         .addTrack(track)
@@ -372,7 +377,7 @@ export function useJitsi() {
         })
         .catch((error) => console.error(error));
     });
-    setIsLoadingOrError(false);
+    setErrorType(-1);
     requestInformationOnRoom();
   }
 
@@ -865,6 +870,7 @@ export function useJitsi() {
       JitsiMeetJS.events.connection.CONNECTION_FAILED,
       () => {
         console.log('The connection failed.');
+        setErrorType(ERRORS.RELOAD);
       }
     );
     connection.addEventListener(
