@@ -6,8 +6,8 @@
     <div>
       <figure>
         <img
-          :style="{ width: '40vw', 'max-width': '300px', 'min-width': '200px' }"
-          src="https://encrypted.fractalup.com/file/MainPublic/fractalup_assets/logo/logo_cooperate.svg"
+          :style="{ width: '300px', 'min-width': '200px', height: '50px' }"
+          src="https://encrypted.fractalup.com/file/MainPublic/fractalup_assets/logo/LogoFU_head.svg"
           alt="logo-fractalup"
         />
       </figure>

@@ -91,8 +91,13 @@ const { errorsCallback } = useJitsiError();
 const { setIsLoadingOrError, setErrorType } = useAuthState();
 const { mainViewState, updateMainViewState } = useMainView();
 const { setUserBackgroundColor } = useUserColor();
-const { updateBgUrl, updateBgSize, setRecordSessionId, recordSessionID } =
-  useRoom();
+const {
+  updateBgUrl,
+  updateBgSize,
+  setRecordSessionId,
+  recordSessionID,
+  updateRoom,
+} = useRoom();
 
 const handNotificationSound = new Audio(
   'https://freesound.org/data/previews/411/411642_5121236-lq.mp3'
@@ -207,6 +212,14 @@ export function useJitsi() {
     {
       name: 'MODERATOR_ENDS_CALL',
       listener: moderatorEndsCall,
+    },
+    {
+      name: 'INIT_RECORDING',
+      listener: adminInitRecording,
+    },
+    {
+      name: 'END_RECORDING',
+      listener: adminEndRecording,
     },
   ];
 
@@ -474,6 +487,14 @@ export function useJitsi() {
     if (participant) {
       participant.isVideoActivated = false;
     }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function adminInitRecording(arg: Command) {
+    updateRoom({ isBeingRecorded: true });
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  function adminEndRecording(arg: Command) {
+    updateRoom({ isBeingRecorded: false });
   }
 
   function riseHand(arg: Command) {
@@ -845,6 +866,7 @@ export function useJitsi() {
 
   function diconnectAll() {
     // apaga room y tracks
+    console.log('DESCONEXIÓN DISCONECTALL');
     localTracks.value.forEach((track) => {
       track.dispose();
     });

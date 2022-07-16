@@ -48,11 +48,11 @@ export default defineComponent({
     const recordTime = ref('00:00:00');
     const secondsElapsed = ref(0);
     /* const { recordingStream, stopRecordingStream } = useInitMerge(); */
-    const { initRecord, finishRecord } = useJitsi();
+    const { initRecord, finishRecord, sendNotification } = useJitsi();
     // const { participants } = useHandleParticipants();
     const { userMe, updateUserMe } = useUserMe();
 
-    const { roomState, updateRoom } = useRoom();
+    const { roomState } = useRoom();
     /* const { admittedParticipants } = useHandleParticipants(); */
     const isLoading = ref(false);
 
@@ -69,7 +69,7 @@ export default defineComponent({
     };
 
     const startRecording = () => {
-      updateRoom({ isBeingRecorded: true });
+      // updateRoom({ isBeingRecorded: true });
 
       // window.xprops?.handleStartRecording?.();
       /* watchParticipants.value = watch(
@@ -85,6 +85,7 @@ export default defineComponent({
       isLoading.value = true;
       warningMessage('Iniciando grabación...');
       mergedName.value = `m-r-${roomState.classroomId}-${userMe.fractalUserId}-${roomState.id}-${timestamp}`;
+      sendNotification('INIT_RECORDING', { value: userMe.id });
       initRecord();
       isLoading.value = false;
       // sendNotificationEvent('RECORDING_STARTED', userMe.id);
@@ -119,18 +120,14 @@ export default defineComponent({
       updateUserMe({
         isRecording: true,
       });
-      updateRoom({
-        isBeingRecorded: true,
-        recordingUrl:
-          'https://f002.backblazeb2.com/file/MainPublic/classrooms/classrroomu/cooperate/recordings/ameba.mp4',
-      });
       //   })
       //   .catch((e) => console.log(e));
     };
 
     const stopRecording = () => {
+      sendNotification('END_RECORDING', { value: userMe.id });
       finishRecord();
-      updateRoom({ isBeingRecorded: false });
+      // updateRoom({ isBeingRecorded: false });
       updateUserMe({
         isRecording: false,
       });

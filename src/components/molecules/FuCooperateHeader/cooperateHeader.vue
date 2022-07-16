@@ -1,14 +1,17 @@
 <template>
-  <header class="m-header">
+  <header class="m-header full-width">
     <div class="m-header__logo q-mt-md q-ml-sm">
       <img
         loading="lazy"
         class="m-header__logo__image"
-        src="https://encrypted.fractalup.com/file/MainPublic/fractalup_assets/logo/logo_cooperate.svg"
         alt="logo-collaborate"
+        src="https://encrypted.fractalup.com/file/MainPublic/fractalup_assets/logo/LogoFU_head.svg"
       />
     </div>
-    <div v-show="false" class="m-header__recordingContainer">
+    <div
+      v-show="!screenMinimized"
+      class="m-header__recordingContainer absolute"
+    >
       <fu-recording />
     </div>
     <!-- <div class="m-header__minimizeContainer"> -->
@@ -17,7 +20,7 @@
     <!-- </div> -->
 
     <div
-      v-show="!showBoard"
+      v-if="!showBoard"
       class="m-header__activeBoard"
       @click="toggleShowBoard"
     >

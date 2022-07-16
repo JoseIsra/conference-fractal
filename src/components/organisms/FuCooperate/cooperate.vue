@@ -1,6 +1,6 @@
 <template>
   <section
-    class="o-cooperate"
+    class="o-cooperate relative-position"
     v-touch:tap="handleTap"
     :style="[bgRenderStyles, heightObjectStyle]"
     v-on="{
@@ -145,7 +145,6 @@ export default defineComponent({
     }, 5000);
 
     window?.xprops?.onProps?.((props) => {
-      console.log('ON PROPS ZOID no multichat', isMultichatUser.value);
       if (isMultichatUser.value) {
         if (props.miniMode) {
           updateScreenTest(true);

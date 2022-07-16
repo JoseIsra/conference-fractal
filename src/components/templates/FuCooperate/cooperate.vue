@@ -88,7 +88,8 @@ export default defineComponent({
       window?.xprops?.streamName || (route.query.streamName as string);
 
     const defaultAvatar =
-      'https://encrypted.fractalup.com/file/FractalUp/Logos/logo_azul.svg';
+      'https://encrypted.fractalup.com/file/MainPublic/classrooms/147/chapters/3e20fcd2-6f2a-4fcd-bb06-63b570959ece/documents/8ed8bd54-ab67-462c-984f-31de3639af39-logo_blanco.svg';
+    // old-logo-not-remove 'https://encrypted.fractalup.com/file/FractalUp/Logos/logo_azul.svg';
 
     const avatar =
       window?.xprops?.photoURL ||

@@ -258,14 +258,6 @@ export default defineComponent({
       }
     );
 
-    watch(
-      () => layout.value,
-      () => {
-        console.log('cambio layout?');
-        console.log('currentvisisble', visibleParticipants.value);
-      }
-    );
-
     const totalUsers = computed(() => {
       return admittedParticipants.value.length + 1;
     });
