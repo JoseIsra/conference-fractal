@@ -9,6 +9,7 @@
     <fu-t-loading
       v-if="isLoadingOrError"
       :loadingMessage="loadingOrErrorMessage"
+      :errorType="errorType"
       @handleLeaveCall="handleZoidLeaveCall"
     />
 
@@ -403,7 +404,6 @@ export default defineComponent({
     };
     onMounted(() => {
       if (roomId) {
-        console.debug('NOMBRE DE ROOM', roomId);
         stablisConnection(roomId);
         setLoadingOrErrorMessage('Loading');
         // setIsLoadingOrError(false);

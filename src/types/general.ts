@@ -3,7 +3,7 @@ export interface MenuOptionsInteractions {
   END: () => void;
   DEVICECONFIGURATION: () => void;
   BOARD: () => void;
-  DEFAULT_LAYOUT: () => void;
-  PRESENTATION_LAYOUT: () => void;
+  GRID_LAYOUT: () => void;
+  ROW_LAYOUT: () => void;
   ADMIN_PANEL: () => void;
 }

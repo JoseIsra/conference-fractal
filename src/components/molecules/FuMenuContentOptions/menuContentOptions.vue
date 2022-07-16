@@ -138,8 +138,8 @@ export default defineComponent({
       END: () => openModalWithName('delete-card'),
       DEVICECONFIGURATION: () => openModalWithName('configuration-card'),
       BOARD: () => openExcaliBoard(),
-      DEFAULT_LAYOUT: () => initDefaultLayout(),
-      PRESENTATION_LAYOUT: () => initPresentationLayout(),
+      GRID_LAYOUT: () => initDefaultLayout(),
+      ROW_LAYOUT: () => initPresentationLayout(),
       ADMIN_PANEL: () => initAdminPanel(),
     });
 
@@ -192,10 +192,10 @@ export default defineComponent({
       }
     };
     const initDefaultLayout = () => {
-      setNewLayout(LAYOUT.DEFAULT_LAYOUT);
+      setNewLayout(LAYOUT.GRID_LAYOUT);
     };
     const initPresentationLayout = () => {
-      setNewLayout(LAYOUT.PRESENTATION_LAYOUT);
+      setNewLayout(LAYOUT.ROW_LAYOUT);
     };
 
     const closeExcaliBoard = () => {
@@ -204,10 +204,8 @@ export default defineComponent({
 
     const renderLabel = (interaction?: string) => {
       return (
-        (interaction == 'DEFAULT_LAYOUT' &&
-          layout.value == LAYOUT.DEFAULT_LAYOUT) ||
-        (interaction == 'PRESENTATION_LAYOUT' &&
-          layout.value == LAYOUT.PRESENTATION_LAYOUT)
+        (interaction == 'GRID_LAYOUT' && layout.value == LAYOUT.GRID_LAYOUT) ||
+        (interaction == 'ROW_LAYOUT' && layout.value == LAYOUT.ROW_LAYOUT)
       );
     };
     onClickOutside(target, () => {

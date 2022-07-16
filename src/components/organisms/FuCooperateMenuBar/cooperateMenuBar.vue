@@ -484,9 +484,9 @@ export default defineComponent({
     });
 
     // const modifierClass = computed(() => ({
-    //   '--presentation': layout.value == LAYOUT.PRESENTATION_LAYOUT,
+    //   '--presentation': layout.value == LAYOUT.ROW_LAYOUT,
     //   '--screenPresentation':
-    //     layout.value == LAYOUT.PRESENTATION_LAYOUT &&
+    //     layout.value == LAYOUT.ROW_LAYOUT &&
     //     mainViewState.mode != MAIN_VIEW_MODE.NONE,
     // }));
 

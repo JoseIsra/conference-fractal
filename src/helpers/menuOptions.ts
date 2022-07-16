@@ -54,14 +54,14 @@ export const menuOptions = {
       iconName: 'grid_view',
       description: 'Vista 1',
       important: false,
-      interaction: INTERACTION_TYPE_MENU_OPTIONS.DEFAULT_LAYOUT,
+      interaction: INTERACTION_TYPE_MENU_OPTIONS.GRID_LAYOUT,
     },
     {
       id: '6',
       iconName: 'more_horiz',
       description: 'Vista 2',
       important: false,
-      interaction: INTERACTION_TYPE_MENU_OPTIONS.PRESENTATION_LAYOUT,
+      interaction: INTERACTION_TYPE_MENU_OPTIONS.ROW_LAYOUT,
     },
     /* 
     {

@@ -4,12 +4,14 @@ interface AuthState {
   loadingOrErrorMessage: string;
   existRoom: boolean;
   isLoadingOrError: boolean;
+  errorType: number;
 }
 
 const authState = reactive<AuthState>({
   loadingOrErrorMessage: '',
   existRoom: false,
   isLoadingOrError: true,
+  errorType: -1,
 } as AuthState);
 
 export function useAuthState() {
@@ -23,10 +25,15 @@ export function useAuthState() {
     authState.isLoadingOrError = isLoadingOrError;
   };
 
+  const setErrorType = (payload: number) => {
+    authState.errorType = payload;
+  };
+
   return {
     authState,
     setLoadingOrErrorMessage,
     setExistRoom,
     setIsLoadingOrError,
+    setErrorType,
   };
 }

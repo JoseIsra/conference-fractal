@@ -21,8 +21,7 @@ export default defineComponent({
     const excaliStyle = computed(() => {
       return {
         '--mobile': $q.screen.lt.md,
-        '--presentation':
-          layout.value == LAYOUT.PRESENTATION_LAYOUT && !isMobile(),
+        '--presentation': layout.value == LAYOUT.ROW_LAYOUT && !isMobile(),
       };
     });
 

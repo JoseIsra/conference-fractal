@@ -12,27 +12,23 @@
         />
       </figure>
 
-      <q-spinner-dots color="blue-1" size="2em" />
-      <div :style="{ 'font-size': '2vw', opacity: '0.3', margin: '12px 0' }">
+      <q-spinner-dots v-if="errorType != 0" color="blue-1" size="2em" />
+      <div
+        v-if="errorType != 0"
+        :style="{ 'font-size': '2vw', opacity: '0.3', margin: '12px 0' }"
+      >
         {{ loadingMessage }}
       </div>
 
       <!-- <q-btn v-if="loadingMessage !== ''" label="Regresar" @click="leaveCall" /> -->
 
-      <q-btn
-        v-if="
-          loadingMessage ===
-          'Error al publicar stream. Por favor, recarga la página'
-        "
-        label="Recargar"
-        @click="refreshPage"
-      />
+      <q-btn v-if="errorType == 0" label="Recargar" @click="refreshPage" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs } from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'FuTLoading',
@@ -41,6 +37,10 @@ export default defineComponent({
       type: String,
       default: '',
     },
+    errorType: {
+      type: Number,
+      default: -1,
+    },
   },
   setup(props, { emit }) {
     const leaveCall = () => emit('handleLeaveCall');
@@ -48,7 +48,7 @@ export default defineComponent({
       window.location.reload();
     };
 
-    return { ...toRefs(props), leaveCall, refreshPage };
+    return { leaveCall, refreshPage };
   },
 });
 </script>

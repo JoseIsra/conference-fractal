@@ -8,7 +8,6 @@ const isLandscape = ref<boolean>(false);
 export const useScreen = () => {
   const updateScreenState = () => {
     screenMinimized.value = !screenMinimized.value;
-    console.log('mini now', screenMinimized.value);
     window.xprops?.toggleMinimize?.(screenMinimized.value);
   };
 
