@@ -378,6 +378,7 @@ export function useJitsi() {
         .catch((error) => console.error(error));
     });
     setErrorType(-1);
+    setIsLoadingOrError(false);
     requestInformationOnRoom();
   }
 
