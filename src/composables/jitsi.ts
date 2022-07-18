@@ -88,7 +88,8 @@ const { setUserMessage, amountOfNewMessages, acumulateMessages } =
 const { externalVideo, updateExternalVideoState } = useExternalVideo();
 
 const { errorsCallback } = useJitsiError();
-const { setIsLoadingOrError, setErrorType } = useAuthState();
+const { setIsLoadingOrError, setErrorType, setLoadingOrErrorMessage } =
+  useAuthState();
 const { mainViewState, updateMainViewState } = useMainView();
 const { setUserBackgroundColor } = useUserColor();
 const {
@@ -821,6 +822,11 @@ export function useJitsi() {
       .catch((error) => console.error(error));
   }
 
+  function getParticipantTracks(id: string) {
+    const tracks = room.getParticipantById(id).getTracks();
+    return tracks;
+  }
+
   function onSuccessConnection() {
     console.log('Connected succesfull');
     // init room
@@ -848,6 +854,19 @@ export function useJitsi() {
       JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
       handleMessageReceived
     );
+    room.on(JitsiMeetJS.events.conference.CONFERENCE_FAILED, (arg) => {
+      console.log('💥NUEVO->EVENT CONFERENCE FAILED', arg);
+      setIsLoadingOrError(true);
+      setErrorType(ERRORS.RELOAD);
+      setLoadingOrErrorMessage(
+        'Se detectaron problemas al ingresar a la videollamada'
+      );
+    });
+
+    room.on(JitsiMeetJS.events.conference.CONFERENCE_ERROR, (arg) => {
+      console.log('💥NUEVO->EVENT CONFERENCE_ERROR, error de conferencia', arg);
+    });
+
     room.on(
       JitsiMeetJS.events.conference.KICKED,
       (actor: unknown, reason: string) => {
@@ -924,5 +943,6 @@ export function useJitsi() {
     updateJitsiParticipant,
     initRecord,
     finishRecord,
+    getParticipantTracks,
   };
 }

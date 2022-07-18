@@ -199,7 +199,6 @@ export default defineComponent({
     watch(
       () => isRowLayout.value,
       (value) => {
-        console.log('disparo  de rowlayout true');
         if (value) {
           hideMenuBar.cancel();
           showMenuBar.value = true;

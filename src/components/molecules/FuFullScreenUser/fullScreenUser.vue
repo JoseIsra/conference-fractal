@@ -135,9 +135,11 @@ import {
   onBeforeUnmount,
 } from 'vue';
 import { useHandleParticipants, useUserMe, useScreen } from '@/composables';
+import { useJitsi } from '@/composables/jitsi';
 import { useMainView } from '@/composables/mainView';
 import _ from 'lodash';
 import { MAIN_VIEW_LOCKED_TYPE } from '@/utils/enums';
+import { User } from '@/types';
 
 export default defineComponent({
   name: 'FuFullScreenUser',
@@ -149,6 +151,7 @@ export default defineComponent({
       useMainView();
     const { screenMinimized } = useScreen();
     const { userMe } = useUserMe();
+    const { getParticipantTracks } = useJitsi();
     const { participants } = useHandleParticipants();
 
     const buttonMinimizeSpecialStyle = ref(false);
@@ -170,22 +173,28 @@ export default defineComponent({
         hideMinimizeMessage();
       }
     };
-    const userPinned = computed(() =>
-      participants.value.find((participant) => participant.id == props.userId)
+    const userPinned = computed(
+      () =>
+        participants.value.find(
+          (participant) => participant.id == props.userId
+        ) as User
     );
     // userMe.id === props.userId
     //   ? userMe
     //   :
     const showPinnedUser = computed(() => userPinned.value);
-
     onMounted(() => {
-      console.log(userPinned.value);
-      userPinned.value?.tracks?.forEach((track) => {
+      const tracks = getParticipantTracks(props.userId as string);
+      console.log('participant from roomjitsi', {
+        user: props.userId,
+        tracks,
+      });
+      tracks.forEach((track) => {
         if (track.getType() == 'audio') {
-          track.attach(audioPinned[userPinned.value?.id as string]);
+          track.attach(audioPinned[props.userId as string]);
         } else {
           void nextTick(() => {
-            track.attach(videoPinned[userPinned.value?.id as string]);
+            track.attach(videoPinned[props.userId as string]);
           });
         }
       });
@@ -194,8 +203,6 @@ export default defineComponent({
     onBeforeUnmount(() => {
       videoPinned = {};
       audioPinned = {};
-      // userPinned?.value?.tracks?.[0].detach(audioPinned[userPinned.value.id]);
-      // userPinned?.value?.tracks?.[1].detach(videoPinned[userPinned.value.id]);
     });
 
     return {
