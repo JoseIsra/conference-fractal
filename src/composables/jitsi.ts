@@ -410,8 +410,7 @@ export function useJitsi() {
     addParticipant({
       id: dataUser.id,
       name: dataUser.name,
-      avatar:
-        'https://encrypted.fractalup.com/file/FractalUp/Logos/logo_azul.svg',
+      avatar: dataUser.avatar,
       isCameraOn: dataUser.isCameraOn,
       isMicOn: dataUser.isMicOn,
       isScreenSharing: dataUser.isScreenSharing,
@@ -480,12 +479,14 @@ export function useJitsi() {
     const participant = findParticipantById(arg.value);
     if (participant) {
       participant.isVideoActivated = true;
+      participant.isScreenSharing = true;
     }
   }
   function finishScreenSharing(arg: Command) {
     const participant = findParticipantById(arg.value);
     if (participant) {
       participant.isVideoActivated = false;
+      participant.isScreenSharing = false;
     }
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

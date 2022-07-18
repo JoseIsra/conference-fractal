@@ -4,8 +4,7 @@
     v-touch:tap="handleTap"
     :style="[bgRenderStyles, heightObjectStyle]"
     v-on="{
-      mousemove:
-        screenMinimized || !isPresentationLayout ? toogleMenuBar : null,
+      mousemove: screenMinimized || !isRowLayout ? toogleMenuBar : null,
     }"
     @click.self="closePanels"
   >
@@ -20,16 +19,13 @@
       @click="updateScreenState"
     />
     <fu-cooperate-header v-show="renderHeader" />
-
     <fu-cooperate-menu-bar v-show="showMenuBar" />
     <transition :name="$q.screen.lt.sm ? 'dragged' : 'slide'">
       <fu-cooperate-side-bar v-show="isSidebarRender" />
     </transition>
     <fu-cooperate-user-video
       v-show="
-        !screenMinimized && $q.screen.lt.md
-          ? showUsersVideoList
-          : !screenMinimized
+        !screenMinimized && isFromMobile ? showUsersVideoList : !screenMinimized
       "
     />
     <fu-hand-notification v-show="handActives && !screenMinimized" />
@@ -158,10 +154,8 @@ export default defineComponent({
     watch(
       () => screenMinimized.value,
       (value) => {
-        if (value) {
-          hideMenuBar.cancel();
-        } else {
-          hideMenuBar.cancel();
+        hideMenuBar.cancel();
+        if (!value) {
           showMenuBar.value = true;
         }
       }
@@ -198,13 +192,14 @@ export default defineComponent({
       return functionsOnMenuBar.handNotificationInfo.length > 0;
     });
 
-    const isPresentationLayout = computed(() => {
+    const isRowLayout = computed(() => {
       return layout.value == LAYOUT.ROW_LAYOUT;
     });
 
     watch(
-      () => isPresentationLayout.value,
+      () => isRowLayout.value,
       (value) => {
+        console.log('disparo  de rowlayout true');
         if (value) {
           hideMenuBar.cancel();
           showMenuBar.value = true;
@@ -217,10 +212,10 @@ export default defineComponent({
         $q.screen.lt.md &&
         layout.value == LAYOUT.ROW_LAYOUT
         ? showHeader.value
-        : isPresentationLayout.value;
+        : isRowLayout.value;
     });
     const bgRenderStyles = computed(() => {
-      return isPresentationLayout.value
+      return isRowLayout.value
         ? {
             'background-image': `url(${roomState.bgInfo.url})`,
             'background-size': `${roomState.bgInfo.maximized ? 100 : 50}vw`,
@@ -247,8 +242,12 @@ export default defineComponent({
         toogleMenuBar();
       }
     };
+    const isFromMobile = computed(() => {
+      return isMobile();
+    });
 
     return {
+      isFromMobile,
       toogleMenuBar,
       showMenuBar,
       isSidebarRender,
@@ -269,7 +268,7 @@ export default defineComponent({
       bgRenderStyles,
       onResize,
       closePanels,
-      isPresentationLayout,
+      isRowLayout,
       handleTap,
     };
   },
