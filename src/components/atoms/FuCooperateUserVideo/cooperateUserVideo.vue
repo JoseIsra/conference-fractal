@@ -229,6 +229,7 @@ export default defineComponent({
     const { screenMinimized } = useScreen();
     const { colorList } = useUserColor();
     const { layout } = useLayout();
+
     const styleOnMobile = computed(() => {
       return admittedParticipants.value.length > 5
         ? { 'justify-content': 'center' }
@@ -283,7 +284,7 @@ export default defineComponent({
         : admittedParticipants.value.slice(0, 4);
     });
 
-    const invisbleParticipantsRowLayout = computed(() => {
+    const invisibleParticipantsRowLayout = computed(() => {
       return $q.screen.lt.md
         ? admittedParticipants.value.slice(1)
         : admittedParticipants.value.slice(4);
@@ -324,7 +325,7 @@ export default defineComponent({
     const invisibleParticipants = computed(() => {
       return isGridLayout.value
         ? invisibleParticipantsGridLayout.value
-        : invisbleParticipantsRowLayout.value;
+        : invisibleParticipantsRowLayout.value;
     });
 
     const indicator = computed(() => {

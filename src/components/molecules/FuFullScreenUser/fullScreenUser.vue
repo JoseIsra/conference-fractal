@@ -151,7 +151,7 @@ export default defineComponent({
       useMainView();
     const { screenMinimized } = useScreen();
     const { userMe } = useUserMe();
-    const { getParticipantTracks } = useJitsi();
+    const { getParticipantTracks, getOwnLocalTracks } = useJitsi();
     const { participants } = useHandleParticipants();
 
     const buttonMinimizeSpecialStyle = ref(false);
@@ -173,22 +173,26 @@ export default defineComponent({
         hideMinimizeMessage();
       }
     };
-    const userPinned = computed(
-      () =>
-        participants.value.find(
-          (participant) => participant.id == props.userId
-        ) as User
+    const userPinned = computed(() =>
+      userMe.id === props.userId
+        ? userMe
+        : (participants.value.find(
+            (participant) => participant.id == props.userId
+          ) as User)
     );
-    // userMe.id === props.userId
-    //   ? userMe
-    //   :
     const showPinnedUser = computed(() => userPinned.value);
     onMounted(() => {
-      const tracks = getParticipantTracks(props.userId as string);
-      console.log('participant from roomjitsi', {
-        user: props.userId,
-        tracks,
-      });
+      let tracks = [];
+      if (props.userId == userMe.id) {
+        tracks = getOwnLocalTracks();
+        console.log('myself tracks', tracks);
+      } else {
+        tracks = getParticipantTracks(props.userId as string);
+        console.log('participant from roomjitsi', {
+          user: props.userId,
+          tracks,
+        });
+      }
       tracks.forEach((track) => {
         if (track.getType() == 'audio') {
           track.attach(audioPinned[props.userId as string]);

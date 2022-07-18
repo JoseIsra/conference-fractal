@@ -729,11 +729,10 @@ export function useJitsi() {
       arg.value
     ) as MainViewState;
     if (userMe.id !== startedBy) {
-      const pinnedUsersNew = pinnedUsers.filter((id) => id !== userMe.id);
       updateMainViewState({
         mode,
         locked,
-        pinnedUsers: pinnedUsersNew,
+        pinnedUsers,
         startedBy,
       });
     }
@@ -824,6 +823,15 @@ export function useJitsi() {
 
   function getParticipantTracks(id: string) {
     const tracks = room.getParticipantById(id).getTracks();
+    return tracks;
+  }
+
+  function getOwnLocalTracks() {
+    const tracks = [];
+    const audioTrack = room.getLocalTracks(MediaType.AUDIO)[0];
+    const videoTrack = room.getLocalTracks(MediaType.VIDEO)[0];
+    tracks.push(audioTrack);
+    tracks.push(videoTrack);
     return tracks;
   }
 
@@ -944,5 +952,6 @@ export function useJitsi() {
     initRecord,
     finishRecord,
     getParticipantTracks,
+    getOwnLocalTracks,
   };
 }
