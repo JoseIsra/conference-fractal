@@ -13,16 +13,17 @@
       </figure>
 
       <q-spinner-dots v-if="errorType != 0" color="blue-1" size="2em" />
-      <div
-        v-if="errorType != 0"
-        :style="{ 'font-size': '2vw', opacity: '0.3', margin: '12px 0' }"
-      >
+      <div :style="{ 'font-size': '2vw', opacity: '0.3', margin: '12px 0' }">
         {{ loadingMessage }}
       </div>
 
       <!-- <q-btn v-if="loadingMessage !== ''" label="Regresar" @click="leaveCall" /> -->
 
-      <q-btn v-if="errorType == 0" label="Recargar" @click="refreshPage" />
+      <q-btn
+        v-if="errorType == 0"
+        label="Reitentar conexión"
+        @click="refreshPage"
+      />
     </div>
   </div>
 </template>

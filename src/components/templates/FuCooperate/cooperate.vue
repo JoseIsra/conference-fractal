@@ -407,7 +407,6 @@ export default defineComponent({
       if (roomId) {
         stablisConnection(roomId);
         setLoadingOrErrorMessage('Loading');
-        // setIsLoadingOrError(false);
       } else {
         setLoadingOrErrorMessage('Please, provide a room id');
       }

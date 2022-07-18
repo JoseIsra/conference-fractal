@@ -89,7 +89,7 @@
       object-fit: cover;
     }
     &.--fillMode {
-      object-fit: fill;
+      object-fit: contain;
     }
     &.--containMode {
       object-fit: contain;
