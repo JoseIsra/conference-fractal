@@ -3,4 +3,5 @@ export interface MainViewState {
   pinnedUsers: string[];
   locked: number;
   startedBy: string;
+  effect?: number;
 }

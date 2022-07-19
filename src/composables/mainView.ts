@@ -2,7 +2,12 @@ import { reactive } from 'vue';
 import { MainViewState } from '@/types';
 import { useInitWebRTC } from './antMedia';
 import _ from 'lodash';
-import { MAIN_VIEW_LOCKED_TYPE, MAIN_VIEW_MODE, LAYOUT } from '@/utils/enums';
+import {
+  MAIN_VIEW_LOCKED_TYPE,
+  MAIN_VIEW_MODE,
+  LAYOUT,
+  MAIN_VIEW_EFFECTS,
+} from '@/utils/enums';
 import { useUserMe } from '@/composables/userMe';
 import { useRoom } from '@/composables/room';
 import { useLayout } from './layout';
@@ -18,6 +23,7 @@ let mainViewState = reactive<MainViewState>({
   pinnedUsers: [],
   locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
   startedBy: '',
+  effect: MAIN_VIEW_EFFECTS.NORMAL,
 });
 export function useMainView() {
   const setMainViewState = (fields: MainViewState) => {
@@ -36,6 +42,7 @@ export function useMainView() {
       pinnedUsers: [],
       locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
       startedBy: '',
+      effect: MAIN_VIEW_EFFECTS.NORMAL,
     };
   };
 
@@ -75,6 +82,7 @@ export function useMainView() {
         pinnedUsers: [userId],
         locked: MAIN_VIEW_LOCKED_TYPE.ANYONE,
         startedBy: userMe.id,
+        effect: MAIN_VIEW_EFFECTS.NORMAL,
       });
     }
     if (Screen.lt.md) {
@@ -93,6 +101,7 @@ export function useMainView() {
           locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
           pinnedUsers: currentPinnedUsers,
           startedBy: '',
+          effect: MAIN_VIEW_EFFECTS.NORMAL,
         });
       } else {
         updateMainViewState({ pinnedUsers: currentPinnedUsers });
@@ -111,6 +120,7 @@ export function useMainView() {
         pinnedUsers: [userId],
         locked: MAIN_VIEW_LOCKED_TYPE.NORMAL_USERS,
         startedBy: userMe.id,
+        effect: MAIN_VIEW_EFFECTS.GLOBAL,
       });
     }
   };
@@ -127,6 +137,7 @@ export function useMainView() {
           locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
           startedBy: userMe.id,
           pinnedUsers: currentPinnedUsers,
+          effect: MAIN_VIEW_EFFECTS.NORMAL,
         });
       } else {
         updateMainViewState({ pinnedUsers: currentPinnedUsers });

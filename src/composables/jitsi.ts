@@ -725,7 +725,7 @@ export function useJitsi() {
   }
 
   function pinUserForAllParticipants(arg: Command) {
-    const { startedBy, pinnedUsers, mode, locked } = JSON.parse(
+    const { startedBy, pinnedUsers, mode, locked, effect } = JSON.parse(
       arg.value
     ) as MainViewState;
     if (userMe.id !== startedBy) {
@@ -734,6 +734,7 @@ export function useJitsi() {
         locked,
         pinnedUsers,
         startedBy,
+        effect,
       });
     }
   }

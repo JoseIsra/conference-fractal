@@ -4,7 +4,7 @@
       <label class="m-list__title__text">Lista de Usuarios</label>
       <small>En línea ({{ admittedParticipants.length + 1 }})</small>
       <q-btn
-        v-show="userMe.roleId === 0 && roomState.roomRestriction != 0"
+        v-show="isAdmin && roomState.roomRestriction != 0"
         :label="
           waitingParticipants.length > 0
             ? `En espera (${waitingParticipants.length})`
@@ -46,7 +46,7 @@
           <!-- HOST - ADMIN  -->
 
           <q-avatar
-            v-show="userMe.roleId === 0"
+            v-show="isAdmin"
             class="m-list__content__userBox__avatar__token"
             color="blue-8"
             text-color="white"
@@ -56,17 +56,13 @@
         </aside>
 
         <div class="m-list__content__userBox__name">{{ userMe.name }} (Tú)</div>
-        <!-- <div class="m-list__content__userBox__actions">
+        <div class="m-list__content__userBox__actions">
           <q-list v-if="isAdmin">
             <div class="m-list__content__userBox__extra">
               <q-btn
-                :icon="
-                  mainViewState.pinnedUsers.includes(userMe.id)
-                    ? 'location_disabled'
-                    : 'gps_fixed'
-                "
+                :icon="iAmPinned ? 'location_disabled' : 'gps_fixed'"
                 @click="
-                  mainViewState.pinnedUsers.includes(userMe.id)
+                  iAmPinned
                     ? unpinUserFromTheRoom(userMe.id)
                     : pinUserToTheRoom(userMe.id)
                 "
@@ -74,8 +70,7 @@
                 text-color="white"
                 :disable="
                   mainViewState.locked === MAIN_VIEW_LOCKED_TYPE.ANYONE ||
-                  (mainViewState.pinnedUsers.length >= 4 &&
-                    !mainViewState.pinnedUsers.includes(userMe.id))
+                  (mainViewState.pinnedUsers.length >= 4 && !iAmPinned)
                 "
               >
                 <q-tooltip
@@ -85,41 +80,13 @@
                   transition-show="scale"
                   transition-hide="scale"
                 >
-                  <label v-if="mainViewState.pinnedUsers.includes(userMe.id)">
-                    Desfijarme</label
-                  >
-                  <label v-else> Fijar para todos</label>
-                </q-tooltip>
-              </q-btn>
-
-              <q-btn
-                :icon="
-                  mainViewState.pinnedUsers.includes(userMe.id)
-                    ? 'location_disabled'
-                    : 'gps_fixed'
-                "
-                @click="
-                  mainViewState.pinnedUsers.includes(userMe.id)
-                    ? removePinnedUser(userMe.id)
-                    : addPinnedUser(userMe.id)
-                "
-                :disable="
-                  (mainViewState.locked !== MAIN_VIEW_LOCKED_TYPE.ANYONE &&
-                    mainViewState.locked !== MAIN_VIEW_LOCKED_TYPE.UNSET) ||
-                  (mainViewState.pinnedUsers.length >= 4 &&
-                    !mainViewState.pinnedUsers.includes(userMe.id))
-                "
-              >
-                <q-tooltip class="bg-grey-10">
-                  <label v-if="mainViewState.pinnedUsers.includes(userMe.id)"
-                    >Desfijarme
-                  </label>
-                  <label v-else>Fijar a mi mismo</label>
+                  <label v-if="iAmPinned"> Desfijarme para todos</label>
+                  <label v-else> Fijarme para todos</label>
                 </q-tooltip>
               </q-btn>
             </div>
           </q-list>
-        </div> -->
+        </div>
       </div>
       <div
         class="m-list__content__userBox"
@@ -144,9 +111,7 @@
               size="20px"
               class="m-list__content__userBox__avatar__handIcon"
             />
-            <q-tooltip class="bg-grey-10" v-if="userMe.roleId == 0">
-              Bajar mano</q-tooltip
-            >
+            <q-tooltip class="bg-grey-10" v-if="isAdmin"> Bajar mano</q-tooltip>
           </q-btn>
           <q-img
             v-else
@@ -245,7 +210,7 @@
             </q-tooltip>
           </q-btn>
 
-          <q-btn icon="fas fa-ellipsis-h" v-if="userMe.roleId === 0">
+          <q-btn icon="fas fa-ellipsis-h" v-if="isAdmin">
             <q-menu :offset="[60, 12]">
               <q-list>
                 <div class="m-list__content__userBox__extra">
@@ -571,6 +536,10 @@ export default defineComponent({
       return userMe.roleId === USER_ROLE.ADMINISTRATOR;
     });
 
+    const iAmPinned = computed(() => {
+      return mainViewState.pinnedUsers.includes(userMe.id);
+    });
+
     const isMicBlocked = (participant: Partial<User>) =>
       admittedParticipants.value.find((part) => part.id === participant.id)
         ?.isMicBlocked === true;
@@ -735,6 +704,7 @@ export default defineComponent({
       MAIN_VIEW_MODE,
       temporalRoleConditional,
       isAdmin,
+      iAmPinned,
       // lockParticipantsScreen,
     };
   },

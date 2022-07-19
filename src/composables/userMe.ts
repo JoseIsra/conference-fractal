@@ -104,6 +104,8 @@ export function useUserMe() {
     localTracks.value = tracks;
   };
 
+  const userIsAdmin = () => userMe.roleId == 0;
+
   return {
     userMe,
     setUserMe,
@@ -121,5 +123,6 @@ export function useUserMe() {
     setLocalTracks,
     localAudioTrack,
     localVideoTrack,
+    userIsAdmin,
   };
 }

@@ -1,7 +1,10 @@
 <template>
   <section
-    class="m-fuser"
-    :class="{ '--avatar': !userPinned?.isVideoActivated }"
+    :class="[
+      'm-fuser relative-position',
+      { '--avatar': !userPinned?.isVideoActivated },
+    ]"
+    v-touch:tap="handleTap"
   >
     <template v-if="showPinnedUser">
       <div v-show="!userPinned?.isVideoActivated" class="m-fuser__avatar">
@@ -11,23 +14,19 @@
             :src="userPinned?.avatar"
           />
         </figure>
-        <div class="m-fuser__info">
-          <label class="m-fuser__info__userName"
+        <div class="m-fuser__info row items-center justify-center">
+          <label
+            class="m-fuser__info__userName text-white text-weight-bolder overflow-hidden text-center"
             >{{ userPinned?.name }}
             {{ userPinned?.id === userMe.id ? '(Tú)' : '' }}</label
           >
         </div>
         <div class="m-fuser__actions">
           <q-btn
-            v-if="
-              mainViewState.locked === MAIN_VIEW_LOCKED_TYPE.ANYONE ||
-              mainViewState.locked === MAIN_VIEW_LOCKED_TYPE.UNSET ||
-              userMe.roleId === 0
-            "
+            v-if="pinNormalEffect || isAdmin"
             @click="
-              mainViewState.locked !== MAIN_VIEW_LOCKED_TYPE.ANYONE &&
-              mainViewState.locked !== MAIN_VIEW_LOCKED_TYPE.UNSET
-                ? removePinnedUserForAll(userPinned?.id)
+              !pinNormalEffect
+                ? unpinUserFromTheRoom(userPinned?.id)
                 : removePinnedUser(userPinned?.id)
             "
             round
@@ -60,7 +59,7 @@
               userPinned?.isScreenSharing && $q.platform.is.mobile,
           },
         ]"
-        @mousemove="toggleMinimizeMessage"
+        @mousemove="renderUnpinButton"
         playsinline
         :ref="
           ($el) => {
@@ -79,20 +78,19 @@
         style="display: none"
         autoplay
       ></audio>
-      <!-- <q-btn
-        flat
-        :label="buttonMinimizeSpecialStyle ? '' : 'Minimizar pantalla'"
-        class="m-fuser__quitBtn"
-        :class="{ '--cornerButton': buttonMinimizeSpecialStyle }"
-        icon="fullscreen_exit"
-        @click="exitFullScreen"
+      <q-btn
+        v-if="pinNormalEffect || isAdmin"
         v-show="
-          showMinimizeMessage &&
-          userPinned?.isVideoActivated &&
-          !screenMinimized &&
-          minimizeOnGlobalFocusedUser
+          showUnpinButton && userPinned?.isVideoActivated && !screenMinimized
         "
-      /> -->
+        :label="unpinBtnLabel"
+        class="m-fuser__unpinBtn absolute-center"
+        icon="fullscreen_exit"
+        color="black"
+        text-color="white"
+        no-caps
+        @click="unpinUser(userPinned.id)"
+      />
     </template>
 
     <!-- <div class="m-fuser__loading" v-else>
@@ -138,7 +136,7 @@ import { useHandleParticipants, useUserMe, useScreen } from '@/composables';
 import { useJitsi } from '@/composables/jitsi';
 import { useMainView } from '@/composables/mainView';
 import _ from 'lodash';
-import { MAIN_VIEW_LOCKED_TYPE } from '@/utils/enums';
+import { MAIN_VIEW_EFFECTS, MAIN_VIEW_LOCKED_TYPE } from '@/utils/enums';
 import { User } from '@/types';
 
 export default defineComponent({
@@ -149,30 +147,24 @@ export default defineComponent({
   setup(props) {
     const { mainViewState, removePinnedUser, removePinnedUserForAll } =
       useMainView();
-    const { screenMinimized } = useScreen();
-    const { userMe } = useUserMe();
+    const { screenMinimized, isMobile } = useScreen();
+    const { userMe, userIsAdmin } = useUserMe();
     const { getParticipantTracks, getOwnLocalTracks } = useJitsi();
     const { participants } = useHandleParticipants();
+    const { sendNotification } = useJitsi();
 
     const buttonMinimizeSpecialStyle = ref(false);
 
-    let showMinimizeMessage = ref(false);
+    let showUnpinButton = ref(false);
 
     let orientationClass = ref('');
     let videoPinned = reactive({} as Record<string, HTMLElement>);
     let audioPinned = reactive({} as Record<string, HTMLElement>);
 
-    const hideMinimizeMessage = _.debounce(() => {
-      showMinimizeMessage.value = false;
+    const hideUnpinButton = _.debounce(() => {
+      showUnpinButton.value = false;
     }, 4000);
 
-    const toggleMinimizeMessage = () => {
-      if (!showMinimizeMessage.value) {
-        showMinimizeMessage.value = true;
-      } else {
-        hideMinimizeMessage();
-      }
-    };
     const userPinned = computed(() =>
       userMe.id === props.userId
         ? userMe
@@ -180,7 +172,19 @@ export default defineComponent({
             (participant) => participant.id == props.userId
           ) as User)
     );
+
     const showPinnedUser = computed(() => userPinned.value);
+
+    const isAdmin = computed(() => userIsAdmin());
+
+    const pinNormalEffect = computed(() => {
+      return mainViewState.effect == MAIN_VIEW_EFFECTS.NORMAL;
+    });
+
+    const unpinBtnLabel = computed(() => {
+      return pinNormalEffect.value ? 'Desfijar' : 'Desfijar para todos';
+    });
+
     onMounted(() => {
       let tracks = [];
       if (props.userId == userMe.id) {
@@ -209,9 +213,41 @@ export default defineComponent({
       audioPinned = {};
     });
 
+    const renderUnpinButton = () => {
+      if (!showUnpinButton.value) {
+        showUnpinButton.value = true;
+      } else {
+        hideUnpinButton();
+      }
+    };
+
+    const unpinUserFromTheRoom = (userId: string) => {
+      removePinnedUserForAll(userId);
+      sendNotification('PIN_USER_FOR_ALL_PARTICIPANTS', {
+        value: JSON.stringify(mainViewState),
+      });
+    };
+
+    const unpinUser = (userId: string) => {
+      if (pinNormalEffect.value) {
+        // unpin personal pinned user
+        removePinnedUser(userId);
+      } else {
+        // is global and only for admin
+        unpinUserFromTheRoom(userId);
+      }
+    };
+
+    const handleTap = () => {
+      if (isMobile()) {
+        renderUnpinButton();
+      }
+    };
+
     return {
-      toggleMinimizeMessage,
-      showMinimizeMessage,
+      pinNormalEffect,
+      renderUnpinButton,
+      showUnpinButton,
       orientationClass,
       screenMinimized,
       buttonMinimizeSpecialStyle,
@@ -224,6 +260,12 @@ export default defineComponent({
       videoPinned,
       audioPinned,
       showPinnedUser,
+      unpinUser,
+      unpinUserFromTheRoom,
+      isAdmin,
+      isMobile,
+      unpinBtnLabel,
+      handleTap,
     };
   },
 });
