@@ -58,12 +58,17 @@
       </div>
     </div>
     <div
-      v-for="participant in visibleParticipants"
+      v-for="participant in admittedParticipants"
       :key="participant.id"
       :class="[
         'userVideoBox text-white',
         { fade: mainViewState.pinnedUsers.includes(participant.id) },
       ]"
+      :ref="
+        ($el) => {
+          demoRefs[participant.id] = $el;
+        }
+      "
       :style="backgroundColorSelected(participant.id)"
     >
       <div
@@ -164,41 +169,17 @@
         </q-tooltip>
       </q-btn>
     </div>
-    <!--  -->
-    <div class="userVideoBox --moreUsers" v-show="indicator > 0">
-      + {{ indicator }}
-    </div>
     <div
-      v-for="(participant, index) in invisibleParticipants"
-      :key="index"
-      style="display: none"
+      class="userVideoBox --moreUsers"
+      v-show="numberOfExtraParticipants > 0"
     >
-      <video
-        :id="'video-' + participant.id"
-        autoplay
-        playsinline
-        :ref="
-          ($el) => {
-            participantVideoTracks[`video-${participant.id}`] = $el;
-          }
-        "
-      />
-      <audio
-        :id="'audio-' + participant.id"
-        style="display: none"
-        :ref="
-          ($el) => {
-            participantAudioTracks[`audio-${participant.id}`] = $el;
-          }
-        "
-        autoplay
-      ></audio>
+      + {{ numberOfExtraParticipants }}
     </div>
   </section>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, watch } from 'vue';
+import { defineComponent, ref, computed, watch, nextTick, reactive } from 'vue';
 import { useQuasar } from 'quasar';
 import {
   useScreen,
@@ -229,6 +210,7 @@ export default defineComponent({
     const { screenMinimized } = useScreen();
     const { colorList } = useUserColor();
     const { layout } = useLayout();
+    let demoRefs = reactive({} as Record<string, HTMLElement>);
 
     const styleOnMobile = computed(() => {
       return admittedParticipants.value.length > 5
@@ -328,12 +310,51 @@ export default defineComponent({
         : invisibleParticipantsRowLayout.value;
     });
 
-    const indicator = computed(() => {
+    const numberOfExtraParticipants = computed(() => {
       return invisibleParticipants.value.length;
     });
 
+    watch(
+      () => admittedParticipants.value,
+      () => {
+        void nextTick(() => {
+          invisibleParticipants.value.forEach((p) => {
+            demoRefs[p.id].classList.add('fade');
+          });
+        });
+      }
+    );
+
+    watch(
+      () => isGridLayout.value,
+      (newVal) => {
+        if (newVal) {
+          visibleParticipants.value.forEach((p) => {
+            demoRefs[p.id].classList.remove('fade');
+          });
+        } else {
+          void nextTick(() => {
+            invisibleParticipants.value.forEach((p) => {
+              demoRefs[p.id].classList.add('fade');
+            });
+          });
+        }
+      }
+    );
+
+    watch(
+      () => mainViewState.pinnedUsers,
+      () => {
+        void nextTick(() => {
+          invisibleParticipants.value.forEach((p) => {
+            demoRefs[p.id].classList.add('fade');
+          });
+        });
+      }
+    );
+
     return {
-      indicator,
+      numberOfExtraParticipants,
       visibleParticipants,
       invisibleParticipants,
       userMe,
@@ -357,6 +378,7 @@ export default defineComponent({
       usersDistributionStyle,
       totalUsers,
       isGridLayout,
+      demoRefs,
     };
   },
 });

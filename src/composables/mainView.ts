@@ -125,18 +125,13 @@ export function useMainView() {
         updateMainViewState({
           mode: MAIN_VIEW_MODE.NONE,
           locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
-          startedBy: '',
+          startedBy: userMe.id,
           pinnedUsers: currentPinnedUsers,
         });
       } else {
         updateMainViewState({ pinnedUsers: currentPinnedUsers });
       }
     }
-    /*  */
-    sendData(roomState.hostId, {
-      eventType: 'SET_FULL_SCREEN',
-      mainViewState,
-    });
   };
 
   const setBoardState = (state: boolean) => {

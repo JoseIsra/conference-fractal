@@ -876,6 +876,16 @@ export function useJitsi() {
     });
 
     room.on(
+      JitsiMeetJS.events.conference.PARTICIPANT_CONN_STATUS_CHANGED,
+      (id: string, status: string) => {
+        console.log('💥NUEVO->EVENT ESTADO DE CONEXIÓN DEL PARTICIPANTE', {
+          user: id,
+          status,
+        });
+      }
+    );
+
+    room.on(
       JitsiMeetJS.events.conference.KICKED,
       (actor: unknown, reason: string) => {
         console.table({ actor, reason });
