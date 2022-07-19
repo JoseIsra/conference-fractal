@@ -12,3 +12,8 @@ export enum MAIN_VIEW_MODE {
   BOARD,
   EXCALI,
 }
+
+export enum MAIN_VIEW_EFFECTS {
+  NORMAL,
+  GLOBAL,
+}
