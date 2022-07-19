@@ -67,8 +67,8 @@
                 "
                 @click="
                   mainViewState.pinnedUsers.includes(userMe.id)
-                    ? removePinnedUserForAll(userMe.id)
-                    : addPinnedUserForAll(userMe.id)
+                    ? unpinUserFromTheRoom(userMe.id)
+                    : pinUserToTheRoom(userMe.id)
                 "
                 color="primary"
                 text-color="white"
@@ -257,8 +257,8 @@
                     "
                     @click="
                       mainViewState.pinnedUsers.includes(participant.id)
-                        ? removePinnedUserForAll(participant.id)
-                        : addPinnedUserForAll(participant.id)
+                        ? unpinUserFromTheRoom(participant.id)
+                        : pinUserToTheRoom(participant.id)
                     "
                     color="primary"
                     text-color="white"
@@ -524,7 +524,6 @@ import {
   USER_ROLE,
   BOARD_EVENTS,
 } from '@/utils/enums';
-import _ from 'lodash';
 
 export default defineComponent({
   name: 'FuCooperateUsersList',
@@ -533,7 +532,8 @@ export default defineComponent({
       mainViewState,
       addPinnedUser,
       removePinnedUser,
-      updateMainViewState,
+      addPinnedUserForAll,
+      removePinnedUserForAll,
     } = useMainView();
     const { waitingParticipants, admittedParticipants, updateParticipantById } =
       useHandleParticipants();
@@ -653,7 +653,6 @@ export default defineComponent({
     };
 
     const handleKickParticipant = (participant: User) => {
-      // const data = JSON.stringify(participant);
       sendNotification('KICK_PARTICIPANT', { value: participant.id });
     };
 
@@ -686,39 +685,15 @@ export default defineComponent({
       });
     };
 
-    const addPinnedUserForAll = (userId: string) => {
-      const currentPinnedUsers = _.clone(mainViewState?.pinnedUsers);
-      currentPinnedUsers?.push(userId);
-      if (mainViewState?.mode === MAIN_VIEW_MODE.USER) {
-        updateMainViewState({ pinnedUsers: currentPinnedUsers });
-      } else {
-        updateMainViewState({
-          mode: MAIN_VIEW_MODE.USER,
-          pinnedUsers: [userId],
-          locked: MAIN_VIEW_LOCKED_TYPE.NORMAL_USERS,
-          startedBy: userMe.id,
-        });
-      }
+    const pinUserToTheRoom = (userId: string) => {
+      addPinnedUserForAll(userId);
       sendNotification('PIN_USER_FOR_ALL_PARTICIPANTS', {
         value: JSON.stringify(mainViewState),
       });
     };
 
-    const removePinnedUserForAll = (userId: string) => {
-      const currentPinnedUsers = _.clone(mainViewState?.pinnedUsers);
-      const index = currentPinnedUsers?.indexOf(userId);
-      if (index == -1) return;
-      currentPinnedUsers.splice(index, 1);
-      if (currentPinnedUsers?.length === 0) {
-        updateMainViewState({
-          mode: MAIN_VIEW_MODE.NONE,
-          locked: MAIN_VIEW_LOCKED_TYPE.UNSET,
-          startedBy: userMe.id,
-          pinnedUsers: currentPinnedUsers,
-        });
-      } else {
-        updateMainViewState({ pinnedUsers: currentPinnedUsers });
-      }
+    const unpinUserFromTheRoom = (userId: string) => {
+      removePinnedUserForAll(userId);
       sendNotification('PIN_USER_FOR_ALL_PARTICIPANTS', {
         value: JSON.stringify(mainViewState),
       });
@@ -753,9 +728,9 @@ export default defineComponent({
       toggleDrawMode,
       mainViewState,
       addPinnedUser,
-      addPinnedUserForAll,
+      pinUserToTheRoom,
       removePinnedUser,
-      removePinnedUserForAll,
+      unpinUserFromTheRoom,
       MAIN_VIEW_LOCKED_TYPE,
       MAIN_VIEW_MODE,
       temporalRoleConditional,
